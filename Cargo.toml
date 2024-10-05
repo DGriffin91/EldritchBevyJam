@@ -1,19 +1,70 @@
 [package]
-name = "bevy_github_ci_template"
+name = "eldritch_game"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0 OR CC0-1.0"
 
-# Compile with Performance Optimizations:
-# https://bevyengine.org/learn/book/getting-started/setup/#compile-with-performance-optimizations
-
 # Enable a small amount of optimization in debug mode
 [profile.dev]
-opt-level = 1
+opt-level = 3
 
 # Enable high optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package."*"]
 opt-level = 3
 
 [dependencies]
-bevy = "0.14"
+bevy = { version = "0.14", features = ["exr"] }
+bs13 = { path = "../../../../screen-13/bs13/bs13" }
+bs13_egui = { path = "../../../../screen-13/bs13/bs13/crates/bs13_egui" }
+bevy_mod_mipmap_generator = { git = "https://github.com/DGriffin91/bevy_mod_mipmap_generator", rev = "f989ee20a05606841438f6c3c585cd00610a10a3", features = [
+    "compress",
+] }
+bevy_egui = { version = "0.28.0", default-features = false, features = [
+    "manage_clipboard",
+    "open_url",
+    "default_fonts",
+] }
+image = "0.24"
+bevy_fps_controller = "0.3.0"
+bevy_rapier3d = "0.27"
+
+
+[patch.crates-io]
+bevy = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+
+bevy_utils = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_ptr = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_macro_utils = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_derive = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_math = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_tasks = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_reflect = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_ecs = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_app = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_time = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_log = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_dynamic_plugin = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_asset = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_audio = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_core = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_diagnostic = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_hierarchy = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_transform = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_window = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_encase_derive = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_mikktspace = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_render = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_core_pipeline = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_input = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_gilrs = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_animation = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_pbr = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_gltf = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_scene = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_sprite = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_text = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_a11y = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_ui = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_winit = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_internal = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_dylib = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
