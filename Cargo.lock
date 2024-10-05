@@ -2148,7 +2148,9 @@ dependencies = [
  "bevy_mod_mipmap_generator",
  "bevy_rapier3d",
  "bs13",
+ "bs13_core",
  "bs13_egui",
+ "bs13_render",
  "image 0.24.9",
 ]
 
