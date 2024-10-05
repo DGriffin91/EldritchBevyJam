@@ -96,7 +96,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         transform: Transform::from_rotation(Quat::from_euler(
             EulerRot::XYZ,
             PI * -0.15,
-            PI * 0.13,
+            PI * 0.14,
             0.0,
         )),
         directional_light: DirectionalLight {
