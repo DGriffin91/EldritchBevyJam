@@ -14,10 +14,16 @@ opt-level = 3
 
 [dependencies]
 bevy = { version = "0.14", features = ["exr"] }
-bs13 = { path = "../../../../screen-13/bs13/bs13" }
-bs13_egui = { path = "../../../../screen-13/bs13/bs13/crates/bs13_egui" }
-bs13_render = { path = "../../../../screen-13/bs13/bs13/crates/bs13_render" }
-bs13_core = { path = "../../../../screen-13/bs13/bs13/crates/bs13_core" }
+
+bs13 = { git = "https://github.com/DGriffin91/bs13" }
+bs13_egui = { git = "https://github.com/DGriffin91/bs13" }
+bs13_render = { git = "https://github.com/DGriffin91/bs13" }
+bs13_core = { git = "https://github.com/DGriffin91/bs13" }
+
+#bs13 = { path = "../../../../screen-13/bs13/bs13" }
+#bs13_egui = { path = "../../../../screen-13/bs13/bs13/crates/bs13_egui" }
+#bs13_render = { path = "../../../../screen-13/bs13/bs13/crates/bs13_render" }
+#bs13_core = { path = "../../../../screen-13/bs13/bs13/crates/bs13_core" }
 
 bevy_mod_mipmap_generator = { git = "https://github.com/DGriffin91/bevy_mod_mipmap_generator", rev = "f989ee20a05606841438f6c3c585cd00610a10a3", features = [
     "compress",

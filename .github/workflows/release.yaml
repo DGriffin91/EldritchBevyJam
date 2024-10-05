@@ -79,6 +79,11 @@ jobs:
         with:
           targets: x86_64-pc-windows-msvc
 
+      - name: install dependencies
+        run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          brew install git cmake ninja python@3.8
+
       - name: Build
         run: |
           cargo build --release --target x86_64-pc-windows-msvc
@@ -131,7 +136,7 @@ jobs:
 
       - name: Build
         run: |
-          cargo build --release --target aarch64-apple-darwin
+          cargo build --release --target aarch64-apple-darwin --features bs13_render/dxc
 
       - name: Prepare Package
         run: |

@@ -1361,6 +1361,7 @@ dependencies = [
 [[package]]
 name = "bs13"
 version = "0.1.0"
+source = "git+https://github.com/DGriffin91/bs13#56bc525ab7e336cac77d5f6ab666f98bf94c273e"
 dependencies = [
  "bevy",
  "bevy_basic_camera",
@@ -1380,6 +1381,7 @@ dependencies = [
 [[package]]
 name = "bs13_core"
 version = "0.1.0"
+source = "git+https://github.com/DGriffin91/bs13#56bc525ab7e336cac77d5f6ab666f98bf94c273e"
 dependencies = [
  "bevy",
  "crossbeam-channel",
@@ -1392,6 +1394,7 @@ dependencies = [
 [[package]]
 name = "bs13_egui"
 version = "0.1.0"
+source = "git+https://github.com/DGriffin91/bs13#56bc525ab7e336cac77d5f6ab666f98bf94c273e"
 dependencies = [
  "bevy",
  "bevy_egui",
@@ -1409,6 +1412,7 @@ dependencies = [
 [[package]]
 name = "bs13_render"
 version = "0.1.0"
+source = "git+https://github.com/DGriffin91/bs13#56bc525ab7e336cac77d5f6ab666f98bf94c273e"
 dependencies = [
  "bevy",
  "bevy_mod_mesh_tools",
@@ -1510,9 +1514,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.1.24"
+version = "1.1.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "812acba72f0a070b003d3697490d2b55b837230ae7c6c6497f05cc2ddbb8d938"
+checksum = "e8d9e0b4957f635b8d3da819d0db5603620467ecf1f692d22a8c2717ce27e6d8"
 dependencies = [
  "jobserver",
  "libc",
