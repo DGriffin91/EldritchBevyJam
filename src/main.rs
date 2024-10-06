@@ -4,6 +4,7 @@
 // Feel free to delete this line.
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
 
+pub mod audio;
 pub mod character_controller;
 pub mod physics;
 pub mod util;
@@ -11,6 +12,7 @@ pub mod util;
 use std::f32::consts::PI;
 use std::path::PathBuf;
 
+use audio::{AudioAssets, GameAudioEmitterParams, GameAudioPlugin};
 use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::pbr::CascadeShadowConfigBuilder;
 use bevy::prelude::*;
@@ -18,6 +20,9 @@ use bevy::render::settings::WgpuSettings;
 use bevy::render::RenderPlugin;
 use bevy::window::{PresentMode, WindowResolution};
 use bevy::winit::{UpdateMode, WinitSettings};
+use bevy_asset_loader::loading_state::config::ConfigureLoadingState;
+use bevy_asset_loader::loading_state::{LoadingState, LoadingStateAppExt};
+use bevy_kira_audio::{Audio, AudioControl};
 use bevy_mod_mipmap_generator::{generate_mipmaps, MipmapGeneratorPlugin, MipmapGeneratorSettings};
 
 use bs13::bs13_render::dyn_material_blender::AllDynMaterialImagesMaterial;
@@ -26,10 +31,19 @@ use bs13::bs13_render::taa::BS13TaaPlugin;
 use bs13::bs13_render::BS13StandardMaterialPluginsSet;
 use bs13_egui::BS13EguiPlugin;
 use character_controller::CharacterController;
+use iyes_progress::ProgressPlugin;
 use physics::{AddTrimeshPhysics, PhysicsStuff};
 
+#[derive(Clone, Eq, PartialEq, Debug, Hash, Default, States)]
+enum GameLoading {
+    #[default]
+    AssetLoading,
+    Loaded,
+}
+
 fn main() {
-    App::new()
+    let mut app = App::new();
+    app.insert_resource(Msaa::Off)
         .insert_resource(AmbientLight::NONE)
         // TODO include compressed textures?
         .insert_resource(MipmapGeneratorSettings {
@@ -72,8 +86,19 @@ fn main() {
             BS13TaaPlugin,
             PhysicsStuff,
             CharacterController,
-        ))
-        .add_systems(Startup, setup)
+            GameAudioPlugin,
+        ));
+
+    app.init_state::<GameLoading>()
+        .add_plugins(ProgressPlugin::new(GameLoading::AssetLoading))
+        .add_loading_state(
+            LoadingState::new(GameLoading::AssetLoading)
+                .continue_to_state(GameLoading::Loaded)
+                .load_collection::<AudioAssets>(),
+        )
+        .add_systems(OnEnter(GameLoading::Loaded), start_cooking);
+
+    app.add_systems(Startup, setup)
         .add_systems(
             Update,
             (
@@ -111,4 +136,29 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         .into(),
         ..default()
     });
+}
+
+fn start_cooking(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    audio: Res<Audio>,
+    audio_assets: Res<AudioAssets>,
+) {
+    // Emitter Nr. 1
+    let cooking = audio.play(audio_assets.cooking.clone()).looped().handle();
+    commands
+        .spawn(SceneBundle {
+            scene: asset_server.load("temp/panStew.glb#Scene0"),
+            transform: Transform::from_xyz(0.0, 2.0, 0.0),
+            ..default()
+        })
+        .insert((
+            bevy_kira_audio::prelude::AudioEmitter {
+                instances: vec![cooking],
+            },
+            GameAudioEmitterParams {
+                gain_db: 0.0,
+                ..default()
+            },
+        ));
 }

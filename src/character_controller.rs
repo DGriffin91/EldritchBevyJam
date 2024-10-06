@@ -13,6 +13,8 @@ use bs13::bs13_render::taa::TaaBundle;
 use bs13::bs13_render::GpuCull;
 use std::f32::consts::TAU;
 
+use crate::audio::GameAudioReceiver;
+
 pub struct CharacterController;
 impl Plugin for CharacterController {
     fn build(&self, app: &mut App) {
@@ -72,32 +74,34 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
         })
         .id();
 
-    commands.spawn((
-        Camera3dBundle {
-            transform: Transform::from_xyz(0.7, 0.7, 1.0)
-                .looking_at(Vec3::new(0.0, 0.3, 0.0), Vec3::Y),
-            projection: Projection::Perspective(PerspectiveProjection {
-                fov: TAU / 5.0,
+    commands
+        .spawn((
+            Camera3dBundle {
+                transform: Transform::from_xyz(0.7, 0.7, 1.0)
+                    .looking_at(Vec3::new(0.0, 0.3, 0.0), Vec3::Y),
+                projection: Projection::Perspective(PerspectiveProjection {
+                    fov: TAU / 5.0,
+                    ..default()
+                }),
                 ..default()
-            }),
-            ..default()
-        },
-        EnvironmentMapLight {
-            diffuse_map: asset_server.load("environment_maps/pisa_diffuse_rgb9e5_zstd.ktx2"),
-            specular_map: asset_server.load("environment_maps/pisa_specular_rgb9e5_zstd.ktx2"),
-            intensity: 1000.0,
-        },
-        Cmaa::default(),
-        TaaBundle::sample4(),
-        DepthPrepass,
-        DeferredPrepass,
-        Ssao,
-        GpuCull {
-            frustum: false,
-            occlusion: false,
-        },
-        RenderPlayer { logical_entity },
-    ));
+            },
+            EnvironmentMapLight {
+                diffuse_map: asset_server.load("environment_maps/pisa_diffuse_rgb9e5_zstd.ktx2"),
+                specular_map: asset_server.load("environment_maps/pisa_specular_rgb9e5_zstd.ktx2"),
+                intensity: 1000.0,
+            },
+            Cmaa::default(),
+            TaaBundle::sample4(),
+            DepthPrepass,
+            DeferredPrepass,
+            Ssao,
+            GpuCull {
+                frustum: false,
+                occlusion: false,
+            },
+            RenderPlayer { logical_entity },
+        ))
+        .insert(GameAudioReceiver);
 }
 
 fn manage_cursor(

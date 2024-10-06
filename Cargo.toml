@@ -13,7 +13,36 @@ opt-level = 3
 opt-level = 3
 
 [dependencies]
-bevy = { version = "0.14", features = ["exr"] }
+bevy = { version = "0.14", default-features = false, features = [
+    "animation",
+    "bevy_asset",
+    "bevy_state",
+    "bevy_color",
+    "bevy_gilrs",
+    "bevy_scene",
+    "bevy_winit",
+    "bevy_core_pipeline",
+    "bevy_pbr",
+    "bevy_gltf",
+    "bevy_render",
+    "bevy_sprite",
+    "bevy_text",
+    "bevy_ui",
+    "multi_threaded",
+    "png",
+    "hdr",
+    "vorbis",
+    "x11",
+    "bevy_gizmos",
+    "android_shared_stdcxx",
+    "tonemapping_luts",
+    "smaa_luts",
+    "default_font",
+    "webgl2",
+    "sysinfo_plugin",
+    "jpeg",
+    "exr",
+] }
 
 bs13 = { git = "https://github.com/DGriffin91/bs13" }
 bs13_egui = { git = "https://github.com/DGriffin91/bs13" }
@@ -36,6 +65,9 @@ bevy_egui = { version = "0.28.0", default-features = false, features = [
 image = "0.24"
 bevy_fps_controller = "0.3.0"
 bevy_rapier3d = "0.27"
+bevy_kira_audio = "0.20.0"
+bevy_asset_loader = "0.21.0"
+iyes_progress = "0.12.0"
 
 
 [patch.crates-io]
@@ -54,7 +86,7 @@ bevy_time = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14"
 bevy_log = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
 bevy_dynamic_plugin = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
 bevy_asset = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
-bevy_audio = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+#bevy_audio = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
 bevy_core = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
 bevy_diagnostic = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
 bevy_hierarchy = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
@@ -77,3 +109,4 @@ bevy_ui = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
 bevy_winit = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
 bevy_internal = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
 bevy_dylib = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
+bevy_state = { git = "https://github.com/DGriffin91/bevy", branch = "bs13_bevy14" }
