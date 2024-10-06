@@ -6,13 +6,14 @@
 
 pub mod audio;
 pub mod character_controller;
+pub mod minimal_kira_audio;
 pub mod physics;
 pub mod util;
 
 use std::f32::consts::PI;
 use std::path::PathBuf;
 
-use audio::{AudioAssets, GameAudioEmitterParams, GameAudioPlugin};
+use audio::{AudioAssets, AudioEmitter, AudioEmitterSet, GameAudioPlugin};
 use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::pbr::CascadeShadowConfigBuilder;
 use bevy::prelude::*;
@@ -22,7 +23,6 @@ use bevy::window::{PresentMode, WindowResolution};
 use bevy::winit::{UpdateMode, WinitSettings};
 use bevy_asset_loader::loading_state::config::ConfigureLoadingState;
 use bevy_asset_loader::loading_state::{LoadingState, LoadingStateAppExt};
-use bevy_kira_audio::{Audio, AudioControl};
 use bevy_mod_mipmap_generator::{generate_mipmaps, MipmapGeneratorPlugin, MipmapGeneratorSettings};
 
 use bs13::bs13_render::dyn_material_blender::AllDynMaterialImagesMaterial;
@@ -32,6 +32,12 @@ use bs13::bs13_render::BS13StandardMaterialPluginsSet;
 use bs13_egui::BS13EguiPlugin;
 use character_controller::CharacterController;
 use iyes_progress::ProgressPlugin;
+use kira::effect::reverb::ReverbBuilder;
+use kira::track::TrackBuilder;
+use kira::tween::Tween;
+use minimal_kira_audio::{
+    sound_data, KiraAudioManager, KiraSoundData, KiraSoundHandle, KiraTrackHandle,
+};
 use physics::{AddTrimeshPhysics, PhysicsStuff};
 
 #[derive(Clone, Eq, PartialEq, Debug, Hash, Default, States)]
@@ -138,27 +144,60 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
+#[derive(Resource)]
+pub struct CookingTrack {
+    pub handle: Handle<KiraTrackHandle>,
+}
+
 fn start_cooking(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    audio: Res<Audio>,
     audio_assets: Res<AudioAssets>,
+    sounds: Res<Assets<KiraSoundData>>,
+    mut tracks: ResMut<Assets<KiraTrackHandle>>,
+    mut manager: ResMut<KiraAudioManager>,
+    mut audio_instances: ResMut<Assets<KiraSoundHandle>>,
 ) {
-    // Emitter Nr. 1
-    let cooking = audio.play(audio_assets.cooking.clone()).looped().handle();
+    let mut track = manager
+        .add_sub_track({
+            let mut builder = TrackBuilder::new();
+            builder.add_effect(ReverbBuilder::new());
+            builder
+        })
+        .unwrap();
+
+    let mut cooking = manager
+        .play(sound_data(&sounds, &audio_assets.cooking).output_destination(&track))
+        .unwrap();
+    cooking.set_loop_region(..);
+
+    let mut music = manager
+        .play(sound_data(&sounds, &audio_assets.music).output_destination(&track))
+        .unwrap();
+    music.set_loop_region(..);
+
+    track.set_volume(1.0, Tween::default());
+
+    commands.insert_resource(CookingTrack {
+        handle: tracks.add(KiraTrackHandle(track)),
+    });
+
     commands
         .spawn(SceneBundle {
             scene: asset_server.load("temp/panStew.glb#Scene0"),
             transform: Transform::from_xyz(0.0, 2.0, 0.0),
             ..default()
         })
-        .insert((
-            bevy_kira_audio::prelude::AudioEmitter {
-                instances: vec![cooking],
-            },
-            GameAudioEmitterParams {
+        .insert(AudioEmitterSet(vec![
+            AudioEmitter {
+                handle: audio_instances.add(KiraSoundHandle(cooking)),
                 gain_db: 0.0,
                 ..default()
             },
-        ));
+            AudioEmitter {
+                handle: audio_instances.add(KiraSoundHandle(music)),
+                gain_db: -10.0,
+                ..default()
+            },
+        ]));
 }
