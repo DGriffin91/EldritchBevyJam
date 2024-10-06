@@ -4,12 +4,6 @@
 // Feel free to delete this line.
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
 
-pub mod audio;
-pub mod character_controller;
-pub mod minimal_kira_audio;
-pub mod physics;
-pub mod util;
-
 use std::f32::consts::PI;
 use std::path::PathBuf;
 
@@ -31,6 +25,7 @@ use bs13::bs13_render::taa::BS13TaaPlugin;
 use bs13::bs13_render::BS13StandardMaterialPluginsSet;
 use bs13_egui::BS13EguiPlugin;
 use character_controller::CharacterController;
+use eldritch_game::{audio, character_controller, minimal_kira_audio, physics};
 use iyes_progress::ProgressPlugin;
 use kira::effect::reverb::ReverbBuilder;
 use kira::track::TrackBuilder;
