@@ -2,6 +2,7 @@ use bevy::core_pipeline::prepass::{DeferredPrepass, DepthPrepass};
 use bevy::math::vec2;
 use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
+use bevy_egui::EguiContexts;
 use bevy_fps_controller::controller::{
     CameraConfig, FpsController, FpsControllerInput, FpsControllerPlugin, LogicalPlayer,
     RenderPlayer,
@@ -110,11 +111,11 @@ fn manage_cursor(
     btn: Res<ButtonInput<MouseButton>>,
     //#[cfg(debug_assertions)] editor_state: Res<EditorState>,
     mut windows: Query<&mut Window>,
-    //mut contexts: EguiContexts,
+    mut contexts: EguiContexts,
 ) {
-    //if contexts.ctx_mut().wants_pointer_input() || setting_clock.0 {
-    //    return;
-    //}
+    if contexts.ctx_mut().wants_pointer_input() {
+        return;
+    }
     let mut window = windows.single_mut();
     let mut fps_controller = fps_controller.single_mut();
     let cursor_locked = window.cursor.grab_mode == CursorGrabMode::Locked;
