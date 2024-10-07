@@ -81,7 +81,7 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
                 transform: Transform::from_xyz(0.7, 0.7, 1.0)
                     .looking_at(Vec3::new(0.0, 0.3, 0.0), Vec3::Y),
                 projection: Projection::Perspective(PerspectiveProjection {
-                    fov: TAU / 5.0,
+                    fov: TAU / 6.0,
                     ..default()
                 }),
                 ..default()
@@ -89,10 +89,10 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
             EnvironmentMapLight {
                 diffuse_map: asset_server.load("environment_maps/pisa_diffuse_rgb9e5_zstd.ktx2"),
                 specular_map: asset_server.load("environment_maps/pisa_specular_rgb9e5_zstd.ktx2"),
-                intensity: 1000.0,
+                intensity: 200.0,
             },
-            Cmaa::default(),
-            TaaBundle::sample4(),
+            //Cmaa::default(),
+            //TaaBundle::sample4(),
             DepthPrepass,
             DeferredPrepass,
             Ssao,
@@ -105,7 +105,7 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
         .insert(GameAudioReceiver);
 }
 
-fn manage_cursor(
+pub fn manage_cursor(
     keys: Res<ButtonInput<KeyCode>>,
     mut fps_controller: Query<&mut FpsController>,
     btn: Res<ButtonInput<MouseButton>>,

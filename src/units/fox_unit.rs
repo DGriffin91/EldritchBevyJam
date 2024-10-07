@@ -77,7 +77,6 @@ fn init_fox_unit_animation(
     mut animation_graphs: ResMut<Assets<AnimationGraph>>,
 ) {
     for (entity, _player) in &mut players {
-        dbg!(entity);
         let mut anim_indices = HashMap::new();
         let mut animation_graph = AnimationGraph::new();
         anim_indices.insert(

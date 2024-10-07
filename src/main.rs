@@ -26,6 +26,7 @@ use bs13::bs13_render::BS13StandardMaterialPluginsSet;
 use bs13_egui::BS13EguiPlugin;
 use character_controller::CharacterController;
 use eldritch_game::audio::spatial::{AudioEmitter, AudioEmitterSet};
+use eldritch_game::guns::{GunSceneAssets, GunsPlugin};
 use eldritch_game::mesh_assets::{AnimationAssets, MeshAssets};
 use eldritch_game::units::UnitsPlugin;
 use eldritch_game::{audio, character_controller, minimal_kira_audio, physics, GameLoading};
@@ -68,7 +69,7 @@ fn main() {
                     primary_window: Some(Window {
                         // TODO make present mode option?
                         // TODO full screen?
-                        present_mode: PresentMode::Immediate,
+                        present_mode: PresentMode::AutoVsync,
                         resolution: WindowResolution::new(1920.0, 1080.0)
                             .with_scale_factor_override(1.0),
                         ..default()
@@ -83,9 +84,9 @@ fn main() {
             BS13TaaPlugin,
             PhysicsStuff,
             CharacterController,
-            GameAudioPlugin,
-            UnitsPlugin,
         ));
+
+    app.add_plugins((GameAudioPlugin, UnitsPlugin, GunsPlugin));
 
     app.init_state::<GameLoading>()
         .add_plugins(ProgressPlugin::new(GameLoading::AssetLoading))
@@ -94,7 +95,8 @@ fn main() {
                 .continue_to_state(GameLoading::Loaded)
                 .load_collection::<AudioAssets>()
                 .load_collection::<MeshAssets>()
-                .load_collection::<AnimationAssets>(),
+                .load_collection::<AnimationAssets>()
+                .load_collection::<GunSceneAssets>(),
         )
         .add_systems(OnEnter(GameLoading::Loaded), start_cooking);
 
@@ -120,6 +122,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         )),
         directional_light: DirectionalLight {
             shadows_enabled: true,
+            illuminance: light_consts::lux::CIVIL_TWILIGHT,
             ..default()
         },
         cascade_shadow_config: CascadeShadowConfigBuilder {
