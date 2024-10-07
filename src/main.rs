@@ -26,7 +26,9 @@ use bs13::bs13_render::BS13StandardMaterialPluginsSet;
 use bs13_egui::BS13EguiPlugin;
 use character_controller::CharacterController;
 use eldritch_game::audio::spatial::{AudioEmitter, AudioEmitterSet};
-use eldritch_game::{audio, character_controller, minimal_kira_audio, physics};
+use eldritch_game::mesh_assets::{AnimationAssets, MeshAssets};
+use eldritch_game::units::UnitsPlugin;
+use eldritch_game::{audio, character_controller, minimal_kira_audio, physics, GameLoading};
 use iyes_progress::ProgressPlugin;
 use kira::effect::reverb::ReverbBuilder;
 use kira::track::TrackBuilder;
@@ -35,13 +37,6 @@ use minimal_kira_audio::{
     sound_data, KiraAudioManager, KiraSoundData, KiraSoundHandle, KiraTrackHandle,
 };
 use physics::{AddTrimeshPhysics, PhysicsStuff};
-
-#[derive(Clone, Eq, PartialEq, Debug, Hash, Default, States)]
-enum GameLoading {
-    #[default]
-    AssetLoading,
-    Loaded,
-}
 
 fn main() {
     let mut app = App::new();
@@ -89,6 +84,7 @@ fn main() {
             PhysicsStuff,
             CharacterController,
             GameAudioPlugin,
+            UnitsPlugin,
         ));
 
     app.init_state::<GameLoading>()
@@ -96,18 +92,14 @@ fn main() {
         .add_loading_state(
             LoadingState::new(GameLoading::AssetLoading)
                 .continue_to_state(GameLoading::Loaded)
-                .load_collection::<AudioAssets>(),
+                .load_collection::<AudioAssets>()
+                .load_collection::<MeshAssets>()
+                .load_collection::<AnimationAssets>(),
         )
         .add_systems(OnEnter(GameLoading::Loaded), start_cooking);
 
     app.add_systems(Startup, setup)
-        .add_systems(
-            Update,
-            (
-                generate_mipmaps::<AllDynMaterialImagesMaterial>,
-                //ui_example_system,
-            ),
-        )
+        .add_systems(Update, generate_mipmaps::<AllDynMaterialImagesMaterial>)
         .run();
 }
 
@@ -147,8 +139,8 @@ pub struct CookingTrack {
 
 fn start_cooking(
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
     audio_assets: Res<AudioAssets>,
+    mesh_assets: Res<MeshAssets>,
     sounds: Res<Assets<KiraSoundData>>,
     mut tracks: ResMut<Assets<KiraTrackHandle>>,
     mut manager: ResMut<KiraAudioManager>,
@@ -180,7 +172,7 @@ fn start_cooking(
 
     commands
         .spawn(SceneBundle {
-            scene: asset_server.load("temp/panStew.glb#Scene0"),
+            scene: mesh_assets.pan_stew.clone(),
             transform: Transform::from_xyz(0.0, 2.0, 0.0),
             ..default()
         })

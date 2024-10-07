@@ -1,5 +1,16 @@
+use bevy::prelude::*;
+
 pub mod audio;
 pub mod character_controller;
+pub mod mesh_assets;
 pub mod minimal_kira_audio;
 pub mod physics;
+pub mod units;
 pub mod util;
+
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
+pub enum GameLoading {
+    #[default]
+    AssetLoading,
+    Loaded,
+}
