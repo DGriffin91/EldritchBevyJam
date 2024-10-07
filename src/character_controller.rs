@@ -13,7 +13,7 @@ use bs13::bs13_render::taa::TaaBundle;
 use bs13::bs13_render::GpuCull;
 use std::f32::consts::TAU;
 
-use crate::audio::GameAudioReceiver;
+use crate::audio::spatial::GameAudioReceiver;
 
 pub struct CharacterController;
 impl Plugin for CharacterController {

@@ -1,22 +1,12 @@
 use bevy::prelude::*;
-use bevy_asset_loader::asset_collection::AssetCollection;
 use kira::tween::Tween;
 
-use crate::minimal_kira_audio::{KiraSoundData, KiraSoundHandle, MinimalKiraPlugin};
+use crate::minimal_kira_audio::KiraSoundHandle;
 
-#[derive(AssetCollection, Resource)]
-pub struct AudioAssets {
-    #[asset(path = "temp/audio/cooking.ogg")]
-    pub cooking: Handle<KiraSoundData>,
-    #[asset(path = "temp/audio/loop.ogg")]
-    pub music: Handle<KiraSoundData>,
-}
-
-pub struct GameAudioPlugin;
-impl Plugin for GameAudioPlugin {
+pub struct SpatialAudioPlugin;
+impl Plugin for SpatialAudioPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(MinimalKiraPlugin)
-            .add_systems(PostUpdate, run_spatial_audio);
+        app.add_systems(PostUpdate, run_spatial_audio);
     }
 }
 
