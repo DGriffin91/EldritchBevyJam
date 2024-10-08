@@ -89,10 +89,10 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
             EnvironmentMapLight {
                 diffuse_map: asset_server.load("environment_maps/pisa_diffuse_rgb9e5_zstd.ktx2"),
                 specular_map: asset_server.load("environment_maps/pisa_specular_rgb9e5_zstd.ktx2"),
-                intensity: 200.0,
+                intensity: 300.0,
             },
-            //Cmaa::default(),
-            //TaaBundle::sample4(),
+            Cmaa::default(),
+            TaaBundle::sample4(),
             DepthPrepass,
             DeferredPrepass,
             Ssao,
