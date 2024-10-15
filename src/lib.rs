@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+pub mod animation;
 pub mod audio;
 pub mod character_controller;
 pub mod guns;

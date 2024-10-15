@@ -27,7 +27,7 @@ use bs13_egui::BS13EguiPlugin;
 use character_controller::CharacterController;
 use eldritch_game::audio::spatial::{AudioEmitter, AudioEmitterSet};
 use eldritch_game::guns::{GunSceneAssets, GunsPlugin};
-use eldritch_game::mesh_assets::{AnimationAssets, MeshAssets};
+use eldritch_game::mesh_assets::MeshAssets;
 use eldritch_game::units::UnitsPlugin;
 use eldritch_game::{audio, character_controller, minimal_kira_audio, physics, GameLoading};
 use iyes_progress::ProgressPlugin;
@@ -95,7 +95,6 @@ fn main() {
                 .continue_to_state(GameLoading::Loaded)
                 .load_collection::<AudioAssets>()
                 .load_collection::<MeshAssets>()
-                .load_collection::<AnimationAssets>()
                 .load_collection::<GunSceneAssets>(),
         )
         .add_systems(OnEnter(GameLoading::Loaded), start_cooking);

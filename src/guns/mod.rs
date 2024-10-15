@@ -247,12 +247,12 @@ pub struct LMGBullet {
     velocity: Vec3,
 }
 pub fn update_bullet(
-    mut commands: Commands,
+    //mut commands: Commands,
     mut bullets: Query<(Entity, &mut LMGBullet, &mut Transform)>,
     time: Res<Time>,
 ) {
     let dt = time.delta_seconds();
-    for (entity, mut bullet, mut trans) in &mut bullets {
+    for (_entity, mut bullet, mut trans) in &mut bullets {
         if trans.translation.y < 0.1 {
             bullet.velocity.y = 0.0;
             bullet.velocity.x *= 0.993;

@@ -1,10 +1,11 @@
 use std::time::Duration;
 
-use bevy::{prelude::*, utils::hashbrown::HashMap};
+use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
 
 use crate::{
-    mesh_assets::{AnimationAssets, MeshAssets},
+    animation::{init_animation_graph, AnimClips, AnimationIndices},
+    mesh_assets::MeshAssets,
     util::{propagate, Propagate},
     GameLoading,
 };
@@ -16,17 +17,27 @@ impl Plugin for FoxUnitPlugin {
             Update,
             (
                 propagate::<FoxUnit>,
-                init_fox_unit_animation,
+                init_animation_graph::<FoxUnit>,
                 ui_example_system,
             )
                 .chain()
                 .run_if(in_state(GameLoading::Loaded)),
-        )
-        .add_systems(OnEnter(GameLoading::Loaded), create_fox_unit);
+        );
+    }
+}
+
+#[derive(Component, Clone)]
+struct FoxUnit;
+
+impl AnimClips for FoxUnit {
+    fn get_gltf_id(&self, mesh_assets: &MeshAssets) -> Handle<Gltf> {
+        mesh_assets.fox_gltf.clone_weak()
     }
 }
 
 fn ui_example_system(
+    mut commands: Commands,
+    mesh_assets: Res<MeshAssets>,
     mut contexts: EguiContexts,
     mut fox: Query<(
         &mut AnimationTransitions,
@@ -35,69 +46,40 @@ fn ui_example_system(
         &mut AnimationPlayer,
     )>,
 ) {
-    let Ok((mut transitions, anim_indices, _fox_unit, mut anim_player)) = fox.get_single_mut()
-    else {
-        return;
-    };
-
     egui::Window::new("Settings").show(contexts.ctx_mut(), |ui| {
-        for (name, anim_index) in anim_indices.iter() {
-            if ui.button(name).clicked() {
+        if ui.button("SPAWN").clicked() {
+            commands.spawn((
+                SceneBundle {
+                    scene: mesh_assets.fox.clone(),
+                    transform: Transform::from_xyz(5.0, 0.0, 0.0).with_scale(Vec3::splat(0.03)),
+                    ..default()
+                },
+                FoxUnit,
+                Propagate(FoxUnit),
+            ));
+        }
+        let mut selected_index = None;
+        let mut iter = fox.iter_mut();
+        if let Some((_transitions, anim_indices, _fox_unit, _anim_player)) = iter.next() {
+            for (name, anim_index) in anim_indices.iter() {
+                if ui.button(name).clicked() {
+                    selected_index = Some(*anim_index);
+                }
+            }
+        }
+        if let Some(selected_index) = selected_index {
+            for (i, (mut transitions, _anim_indices, _fox_unit, mut anim_player)) in
+                fox.iter_mut().enumerate()
+            {
                 transitions
-                    .play(&mut anim_player, *anim_index, Duration::from_secs_f32(0.2))
-                    .repeat();
+                    .play(
+                        &mut anim_player,
+                        selected_index,
+                        Duration::from_secs_f32(i as f32 * 0.1 + 1.0),
+                    )
+                    .repeat()
+                    .set_speed(i as f32 * 0.1 + 1.0);
             }
         }
     });
-}
-
-#[derive(Component, Clone)]
-struct FoxUnit;
-
-#[derive(Component, Clone, Deref, DerefMut)]
-// TODO use enum or Handle<AnimationClip> or something once this is more figured out
-struct AnimationIndices(HashMap<String, AnimationNodeIndex>);
-
-fn create_fox_unit(mut commands: Commands, mesh_assets: Res<MeshAssets>) {
-    commands.spawn((
-        SceneBundle {
-            scene: mesh_assets.fox.clone(),
-            transform: Transform::from_xyz(5.0, 0.0, 0.0).with_scale(Vec3::splat(0.03)),
-            ..default()
-        },
-        FoxUnit,
-        Propagate(FoxUnit),
-    ));
-}
-
-fn init_fox_unit_animation(
-    mut commands: Commands,
-    mut players: Query<(Entity, &mut AnimationPlayer), (Added<AnimationPlayer>, With<FoxUnit>)>,
-    animation_assets: Res<AnimationAssets>,
-    mut animation_graphs: ResMut<Assets<AnimationGraph>>,
-) {
-    for (entity, _player) in &mut players {
-        let mut anim_indices = HashMap::new();
-        let mut animation_graph = AnimationGraph::new();
-        anim_indices.insert(
-            String::from("idle"),
-            animation_graph.add_clip(animation_assets.fox_0.clone(), 1.0, animation_graph.root),
-        );
-        anim_indices.insert(
-            String::from("walk"),
-            animation_graph.add_clip(animation_assets.fox_1.clone(), 1.0, animation_graph.root),
-        );
-        anim_indices.insert(
-            String::from("run"),
-            animation_graph.add_clip(animation_assets.fox_2.clone(), 1.0, animation_graph.root),
-        );
-
-        let graph_handle = animation_graphs.add(animation_graph);
-
-        let transitions = AnimationTransitions::new();
-
-        commands
-            .entity(entity)
-            .insert((transitions, graph_handle, AnimationIndices(anim_indices)));
-    }
 }
