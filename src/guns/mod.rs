@@ -1,9 +1,18 @@
-use bevy::{math::Vec3A, prelude::*};
+use std::{
+    borrow::Cow,
+    f32::consts::{PI, TAU},
+};
+
+use bevy::{math::*, prelude::*};
 use bevy_asset_loader::asset_collection::AssetCollection;
 use bevy_egui::EguiContexts;
 use bevy_fps_controller::controller::RenderPlayer;
 
-use crate::{character_controller::manage_cursor, GameLoading};
+use crate::{
+    character_controller::manage_cursor,
+    util::{propagate_to_name, PropagateToName},
+    GameLoading,
+};
 
 #[derive(AssetCollection, Resource)]
 pub struct GunSceneAssets {
@@ -13,8 +22,6 @@ pub struct GunSceneAssets {
     pub lmg_bullet: Handle<Scene>,
     #[asset(path = "models/guns/lmg_bullet_jacket.gltf#Scene0")]
     pub lmg_bullet_jacket: Handle<Scene>,
-    #[asset(path = "models/guns/muzzle_flash.gltf#Scene0")]
-    pub muzzle_flash: Handle<Scene>,
 }
 
 pub struct GunsPlugin;
@@ -27,6 +34,7 @@ impl Plugin for GunsPlugin {
                 .after(manage_cursor),
         )
         .add_systems(Update, update_bullet.run_if(in_state(GameLoading::Loaded)))
+        .add_systems(Update, propagate_to_name::<LMGMuzzleFlashMesh>)
         .add_systems(OnEnter(GameLoading::Loaded), spawn_gun);
     }
 }
@@ -36,7 +44,7 @@ pub struct GunLMG;
 
 #[derive(Component)]
 pub struct LMGMuzzleFlashLight;
-#[derive(Component)]
+#[derive(Component, Clone)]
 pub struct LMGMuzzleFlashMesh;
 
 #[derive(Component, Default)]
@@ -71,6 +79,7 @@ fn spawn_gun(mut commands: Commands, gun_assets: Res<GunSceneAssets>) {
                 ..default()
             },
             GunLMG,
+            PropagateToName(LMGMuzzleFlashMesh, Cow::Borrowed("MUZZLE_FLASH")),
         ))
         .with_children(|cmd| {
             cmd.spawn((
@@ -90,15 +99,6 @@ fn spawn_gun(mut commands: Commands, gun_assets: Res<GunSceneAssets>) {
                     ..default()
                 },
                 LMGMuzzleFlashLight,
-            ));
-            cmd.spawn((
-                SceneBundle {
-                    scene: gun_assets.muzzle_flash.clone(),
-                    transform: Transform::from_xyz(0.0, 0.0, -1.2).with_scale(Vec3::splat(2.0)),
-                    visibility: Visibility::Hidden,
-                    ..default()
-                },
-                LMGMuzzleFlashMesh,
             ));
         });
 }
@@ -173,38 +173,51 @@ pub fn fire_gun(
     };
 
     let dt = time.delta_seconds();
-    let t = time.elapsed_seconds();
-    let max_rotate_speed = 20.0;
-    let ramp_up_speed = 1.0;
-    let ramp_down_speed = 0.6;
-    let flash_rate = 1.0;
+    let max_rotate_speed = 14.0;
+    let min_fire_ratio = 0.0;
+    let ramp_up_speed = 0.1;
+    let ramp_down_speed = 0.7;
+    let rotate_offset = 0.1;
     gun_muzzle_light.intensity = 0.0;
 
-    let fire_flip =
-        ((t * props.rotate_speed * max_rotate_speed * flash_rate) as i32).rem_euclid(2) == 0;
+    // TODO make input configurable
+    let trigger_pressed = btn.pressed(MouseButton::Left);
 
-    if !fire_flip {
+    if trigger_pressed {
+        props.rotate_speed += dt * ramp_up_speed;
+    } else {
+        props.rotate_speed -= dt * ramp_down_speed;
+    }
+    gun_rot_trans.rotate_local_z(-dt * props.rotate_speed * max_rotate_speed);
+    props.rotate_speed = props.rotate_speed.clamp(0.0, 1.0);
+
+    let barrel_rot = gun_rot_trans.local_y().xy();
+    let fac = (barrel_rot.y.atan2(barrel_rot.x) + PI) / TAU + rotate_offset;
+    let b_fac = (fac * 8.0).fract();
+    let fire_flip_vis = b_fac > 0.8 && b_fac < 1.0;
+    let fire_flip_logic = b_fac > 0.4; // TODO make sure it fires even at low frame rates
+
+    if !fire_flip_logic {
         *fire_ready = true;
     }
 
-    let fire_bullet_period =
-        fire_flip && btn.pressed(MouseButton::Left) && props.rotate_speed >= 1.0;
+    let can_fire = trigger_pressed && props.rotate_speed >= min_fire_ratio;
 
     let mut fire_this_frame = false;
-    if *fire_ready && fire_bullet_period {
+    if *fire_ready && fire_flip_logic && can_fire {
         fire_this_frame = true;
         *fire_ready = false;
     }
 
-    if fire_bullet_period {
-        gun_muzzle_light.intensity = 500000.0;
+    if fire_flip_vis && can_fire {
+        gun_muzzle_light.intensity = 400000.0;
         *muzzle_flash_mesh_vis = Visibility::Visible;
     } else {
         *muzzle_flash_mesh_vis = Visibility::Hidden;
     }
 
     if fire_this_frame {
-        let gun_global_mat = gun_global_trans.compute_matrix(); // TODO reuse camera mat or something
+        let gun_global_mat = gun_global_trans.compute_matrix();
 
         commands.spawn((
             SceneBundle {
@@ -230,16 +243,6 @@ pub fn fire_gun(
             },
         ));
     }
-
-    // TODO make input configurable
-    if btn.pressed(MouseButton::Left) {
-        props.rotate_speed += dt * ramp_up_speed;
-        if props.rotate_speed >= 1.0 {}
-    } else {
-        props.rotate_speed -= dt * ramp_down_speed;
-    }
-    gun_rot_trans.rotate_local_z(-dt * props.rotate_speed * max_rotate_speed);
-    props.rotate_speed = props.rotate_speed.clamp(0.0, 1.0);
 }
 
 #[derive(Component)]

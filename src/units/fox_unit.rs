@@ -16,7 +16,7 @@ impl Plugin for FoxUnitPlugin {
         app.add_systems(
             Update,
             (
-                propagate::<FoxUnit>,
+                propagate::<FoxUnit, AnimationPlayer>,
                 init_animation_graph::<FoxUnit>,
                 ui_example_system,
             )
@@ -54,7 +54,6 @@ fn ui_example_system(
                     transform: Transform::from_xyz(5.0, 0.0, 0.0).with_scale(Vec3::splat(0.03)),
                     ..default()
                 },
-                FoxUnit,
                 Propagate(FoxUnit),
             ));
         }
