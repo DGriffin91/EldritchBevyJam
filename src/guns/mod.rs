@@ -155,6 +155,7 @@ pub fn fire_gun(
     time: Res<Time>,
     mut fire_ready: Local<bool>,
     gun_assets: Res<GunSceneAssets>,
+    mut vis_started: Local<f32>,
 ) {
     if contexts.ctx_mut().wants_pointer_input() {
         return;
@@ -172,8 +173,9 @@ pub fn fire_gun(
         return;
     };
 
+    let t = time.elapsed_seconds();
     let dt = time.delta_seconds();
-    let max_rotate_speed = 14.0;
+    let max_rotate_speed = 12.0;
     let min_fire_ratio = 0.0;
     let ramp_up_speed = 0.1;
     let ramp_down_speed = 0.7;
@@ -209,11 +211,18 @@ pub fn fire_gun(
         *fire_ready = false;
     }
 
-    if fire_flip_vis && can_fire {
+    let max_vis_time = 0.04;
+    if fire_flip_vis && can_fire && t - *vis_started < max_vis_time {
         gun_muzzle_light.intensity = 400000.0;
         *muzzle_flash_mesh_vis = Visibility::Visible;
+        if *vis_started == f32::MAX {
+            *vis_started = t;
+        }
     } else {
         *muzzle_flash_mesh_vis = Visibility::Hidden;
+    }
+    if !(fire_flip_vis && can_fire) {
+        *vis_started = f32::MAX;
     }
 
     if fire_this_frame {

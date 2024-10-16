@@ -12,6 +12,7 @@ use bs13::bs13_render::cmaa::Cmaa;
 use bs13::bs13_render::ssao::Ssao;
 use bs13::bs13_render::taa::TaaBundle;
 use bs13::bs13_render::GpuCull;
+use bs13_render::DepthPrepassForDeferred;
 use std::f32::consts::TAU;
 
 use crate::audio::spatial::GameAudioReceiver;
@@ -97,8 +98,12 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
             DeferredPrepass,
             Ssao,
             GpuCull {
-                frustum: false,
-                occlusion: false,
+                frustum: true,
+                occlusion: true,
+            },
+            DepthPrepassForDeferred {
+                screen_ratio_threshold: None,
+                include_alpha_mask: false,
             },
             RenderPlayer { logical_entity },
         ))
