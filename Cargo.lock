@@ -1384,6 +1384,7 @@ dependencies = [
 [[package]]
 name = "bs13"
 version = "0.1.0"
+source = "git+https://github.com/DGriffin91/bs13#e3ced099b5ef36a3976d5570a4cd4f9c79a6ca1a"
 dependencies = [
  "bevy",
  "bevy_basic_camera",
@@ -1403,6 +1404,7 @@ dependencies = [
 [[package]]
 name = "bs13_core"
 version = "0.1.0"
+source = "git+https://github.com/DGriffin91/bs13#e3ced099b5ef36a3976d5570a4cd4f9c79a6ca1a"
 dependencies = [
  "bevy",
  "crossbeam-channel",
@@ -1415,6 +1417,7 @@ dependencies = [
 [[package]]
 name = "bs13_egui"
 version = "0.1.0"
+source = "git+https://github.com/DGriffin91/bs13#e3ced099b5ef36a3976d5570a4cd4f9c79a6ca1a"
 dependencies = [
  "bevy",
  "bevy_egui",
@@ -1432,6 +1435,7 @@ dependencies = [
 [[package]]
 name = "bs13_render"
 version = "0.1.0"
+source = "git+https://github.com/DGriffin91/bs13#e3ced099b5ef36a3976d5570a4cd4f9c79a6ca1a"
 dependencies = [
  "bevy",
  "bevy_mod_mesh_tools",
