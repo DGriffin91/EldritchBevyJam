@@ -1,4 +1,4 @@
-use crate::util::all_children;
+use crate::util::{all_children, propagate_to_name};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 
@@ -7,11 +7,18 @@ impl Plugin for PhysicsStuff {
     fn build(&self, app: &mut App) {
         app.add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
             //.add_plugin(RapierDebugRenderPlugin::default())
-            .add_systems(Update, setup_trimesh_colliders);
+            .add_systems(
+                Update,
+                (
+                    propagate_to_name::<AddTrimeshPhysics>,
+                    setup_trimesh_colliders,
+                )
+                    .chain(),
+            );
     }
 }
 
-#[derive(Component)]
+#[derive(Component, Clone, Copy)]
 pub struct AddTrimeshPhysics;
 
 pub fn setup_trimesh_colliders(

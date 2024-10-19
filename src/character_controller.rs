@@ -12,6 +12,7 @@ use bs13::bs13_render::cmaa::Cmaa;
 use bs13::bs13_render::ssao::Ssao;
 use bs13::bs13_render::taa::TaaBundle;
 use bs13::bs13_render::GpuCull;
+use bs13_render::frame_pyramid::FramePyramid;
 use bs13_render::DepthPrepassForDeferred;
 use std::f32::consts::TAU;
 
@@ -106,6 +107,7 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
                 include_alpha_mask: false,
             },
             RenderPlayer { logical_entity },
+            FramePyramid,
         ))
         .insert(GameAudioReceiver);
 }

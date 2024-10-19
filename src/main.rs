@@ -4,6 +4,7 @@
 // Feel free to delete this line.
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
 
+use std::borrow::Cow;
 use std::f32::consts::PI;
 use std::path::PathBuf;
 
@@ -29,6 +30,7 @@ use eldritch_game::audio::spatial::{AudioEmitter, AudioEmitterSet};
 use eldritch_game::guns::{GunSceneAssets, GunsPlugin};
 use eldritch_game::mesh_assets::MeshAssets;
 use eldritch_game::units::UnitsPlugin;
+use eldritch_game::util::PropagateToName;
 use eldritch_game::{audio, character_controller, minimal_kira_audio, physics, GameLoading};
 use iyes_progress::ProgressPlugin;
 use kira::effect::reverb::ReverbBuilder;
@@ -110,7 +112,10 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             scene: asset_server.load("temp/init_test_scene.gltf#Scene0"),
             ..default()
         })
-        .insert(AddTrimeshPhysics);
+        .insert(PropagateToName(
+            AddTrimeshPhysics,
+            Cow::Borrowed("COLLIDER"),
+        ));
 
     commands.spawn(DirectionalLightBundle {
         transform: Transform::from_rotation(Quat::from_euler(
