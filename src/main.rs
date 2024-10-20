@@ -107,7 +107,7 @@ fn main() {
         .run();
 }
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+fn setup(mut commands: Commands, _asset_server: Res<AssetServer>) {
     //commands
     //    .spawn(SceneBundle {
     //        scene: asset_server.load("temp/init_test_scene.gltf#Scene0"),
@@ -117,15 +117,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     //        AddTrimeshPhysics,
     //        Cow::Borrowed("COLLIDER"),
     //    ));
-    //
-    //commands.spawn(SceneBundle {
-    //    scene: mesh_assets.level_c.clone(),
-    //    ..default()
-    //});
-    //.insert(PropagateToName(
-    //    AddTrimeshPhysics,
-    //    Cow::Borrowed("COLLIDER"),
-    //));
 
     commands.spawn(DirectionalLightBundle {
         transform: Transform::from_rotation(Quat::from_euler(

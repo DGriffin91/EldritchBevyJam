@@ -1,11 +1,12 @@
 use bevy::prelude::*;
-use fox_unit::FoxUnitPlugin;
+use plum::PlumUnitPlugin;
 
 pub mod fox_unit;
+pub mod plum;
 
 pub struct UnitsPlugin;
 impl Plugin for UnitsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(FoxUnitPlugin);
+        app.add_plugins(PlumUnitPlugin);
     }
 }
