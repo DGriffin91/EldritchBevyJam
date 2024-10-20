@@ -16,12 +16,306 @@
 						"base_scale":1.0
 					}
 				],
-				"BS13ExtensionProperties":{}
+				"BS13ExtensionProperties":{},
+				"subrect_atlas":{
+					"name":"DUV_Scratch_DGrey",
+					"type":"Object"
+				},
+				"duv_hotspotmaterial":{
+					"name":"DUV_Shiney_Silver",
+					"type":"Material"
+				},
+				"trim_atlas":{},
+				"uv_box":{
+					"name":"DUV_Scratch_DGrey",
+					"type":"Object"
+				},
+				"duv_hotspotuseinset":1,
+				"formatswap":{
+					"convert_operator":{},
+					"image_data_collection":[
+						{
+							"name":"DUV_Scratch_DGrey_BaseColor.png",
+							"image_data":{
+								"name":"DUV_Scratch_DGrey_BaseColor.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":10.721314430236816,
+							"size":[
+								4096,
+								4096
+							],
+							"max_size":4096,
+							"original_image":"",
+							"map_type":3
+						},
+						{
+							"name":"DUV_Scratch_DGrey_Emissive.png",
+							"image_data":{
+								"name":"DUV_Scratch_DGrey_Emissive.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":0.0490729995071888,
+							"size":[
+								4096,
+								4096
+							],
+							"max_size":4096,
+							"original_image":"",
+							"map_type":8
+						},
+						{
+							"name":"DUV_Scratch_DGrey_Height.png",
+							"image_data":{
+								"name":"DUV_Scratch_DGrey_Height.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":0.025414999574422836,
+							"size":[
+								4096,
+								4096
+							],
+							"max_size":4096,
+							"original_image":"",
+							"map_type":2
+						},
+						{
+							"name":"DUV_Scratch_DGrey_Metallic.png",
+							"image_data":{
+								"name":"DUV_Scratch_DGrey_Metallic.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":0.025414999574422836,
+							"size":[
+								4096,
+								4096
+							],
+							"max_size":4096,
+							"original_image":"",
+							"map_type":7
+						},
+						{
+							"name":"DUV_Scratch_DGrey_Normal.png",
+							"image_data":{
+								"name":"DUV_Scratch_DGrey_Normal.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":0.0681919977068901,
+							"size":[
+								4096,
+								4096
+							],
+							"max_size":4096,
+							"original_image":"",
+							"map_type":1
+						},
+						{
+							"name":"DUV_Scratch_DGrey_Roughness.png",
+							"image_data":{
+								"name":"DUV_Scratch_DGrey_Roughness.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":3.9830150604248047,
+							"size":[
+								4096,
+								4096
+							],
+							"max_size":4096,
+							"original_image":"",
+							"map_type":5
+						},
+						{
+							"name":"DUV_Shiney_Silver__BaseColor.png",
+							"image_data":{
+								"name":"DUV_Shiney_Silver__BaseColor.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":16.083311080932617,
+							"size":[
+								4096,
+								4096
+							],
+							"max_size":4096,
+							"original_image":"",
+							"map_type":3
+						},
+						{
+							"name":"DUV_Shiney_Silver__Emissive.png",
+							"image_data":{
+								"name":"DUV_Shiney_Silver__Emissive.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":0.0490729995071888,
+							"size":[
+								4096,
+								4096
+							],
+							"max_size":4096,
+							"original_image":"",
+							"map_type":8
+						},
+						{
+							"name":"DUV_Shiney_Silver__Height.png",
+							"image_data":{
+								"name":"DUV_Shiney_Silver__Height.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":0.025414999574422836,
+							"size":[
+								4096,
+								4096
+							],
+							"max_size":4096,
+							"original_image":"",
+							"map_type":2
+						},
+						{
+							"name":"DUV_Shiney_Silver__Metallic.png",
+							"image_data":{
+								"name":"DUV_Shiney_Silver__Metallic.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":0.025414999574422836,
+							"size":[
+								4096,
+								4096
+							],
+							"max_size":4096,
+							"original_image":"",
+							"map_type":7
+						},
+						{
+							"name":"DUV_Shiney_Silver__Normal.png",
+							"image_data":{
+								"name":"DUV_Shiney_Silver__Normal.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":19.498899459838867,
+							"size":[
+								4096,
+								4096
+							],
+							"max_size":4096,
+							"original_image":"",
+							"map_type":1
+						},
+						{
+							"name":"DUV_Shiney_Silver__Roughness.png",
+							"image_data":{
+								"name":"DUV_Shiney_Silver__Roughness.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":12.527471542358398,
+							"size":[
+								4096,
+								4096
+							],
+							"max_size":4096,
+							"original_image":"",
+							"map_type":5
+						},
+						{
+							"name":"Render Result",
+							"image_data":{
+								"name":"Render Result",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":0.0,
+							"size":[
+								0,
+								0
+							],
+							"max_size":0,
+							"original_image":"",
+							"map_type":0,
+							"not_found":1
+						},
+						{
+							"name":"rusty_metal_03_diff.png",
+							"image_data":{
+								"name":"rusty_metal_03_diff.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":0.7810559868812561,
+							"size":[
+								1024,
+								1024
+							],
+							"max_size":1024,
+							"original_image":"",
+							"map_type":3
+						},
+						{
+							"name":"rusty_metal_03_disp.png",
+							"image_data":{
+								"name":"rusty_metal_03_disp.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":1.6435699462890625,
+							"size":[
+								1024,
+								1024
+							],
+							"max_size":1024,
+							"original_image":"",
+							"map_type":2
+						},
+						{
+							"name":"rusty_metal_03_nor_gl.png",
+							"image_data":{
+								"name":"rusty_metal_03_nor_gl.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":1.416774034500122,
+							"size":[
+								1024,
+								1024
+							],
+							"max_size":1024,
+							"original_image":"",
+							"map_type":1
+						},
+						{
+							"name":"rusty_metal_03_rough.png",
+							"image_data":{
+								"name":"rusty_metal_03_rough.png",
+								"type":"Image"
+							},
+							"selected":0,
+							"file_size_mb":0.39535000920295715,
+							"size":[
+								1024,
+								1024
+							],
+							"max_size":1024,
+							"original_image":"",
+							"map_type":5
+						}
+					],
+					"image_data_list_custom_index":15
+				}
 			},
 			"name":"Scene",
 			"nodes":[
 				2,
-				7
+				7,
+				8
 			]
 		}
 	],
@@ -153,6 +447,26 @@
 				0,
 				0,
 				1
+			]
+		},
+		{
+			"extras":{
+				"kitops":{},
+				"scatter5":{},
+				"grassblade":{},
+				"DM":{},
+				"terrain_settings":{},
+				"ant_landscape":{},
+				"MM":{},
+				"hops":{},
+				"bc":{}
+			},
+			"mesh":6,
+			"name":"DUV_Scratch_DGrey.001",
+			"translation":[
+				0,
+				0,
+				7.259999752044678
 			]
 		}
 	],
@@ -1470,8 +1784,8 @@
 						}
 					],
 					"material_name":"flash2",
-					"material_graph_hash":"-4834353583478302695",
-					"material_graph_archetype_hash":"7243695185353624928"
+					"material_graph_hash":"-6371681891966393205",
+					"material_graph_archetype_hash":"8928637702513157174"
 				}
 			},
 			"name":"flash2",
@@ -2799,8 +3113,8 @@
 						}
 					],
 					"material_name":"flash1",
-					"material_graph_hash":"6015419779924633829",
-					"material_graph_archetype_hash":"-5366313420370679701"
+					"material_graph_hash":"6198063202543942986",
+					"material_graph_archetype_hash":"-1385609358132264992"
 				}
 			},
 			"name":"flash1",
@@ -2818,8 +3132,931 @@
 		{
 			"doubleSided":true,
 			"extras":{
+				"DM":{},
+				"terrain_settings":{},
 				"bs13_material_graph":{
 					"graph":[
+						{
+							"type":"TEX_COORD",
+							"name":"Texture_Coordinate",
+							"inputs":[],
+							"outputs":[
+								{
+									"name":"Generated",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								},
+								{
+									"name":"Normal",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":1
+								},
+								{
+									"name":"UV",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":2
+								},
+								{
+									"name":"Object",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":3
+								},
+								{
+									"name":"Camera",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":4
+								},
+								{
+									"name":"Window",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":5
+								},
+								{
+									"name":"Reflection",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":6
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeTexCoord",
+								"bl_label":"Texture Coordinate",
+								"bl_static_type":"TEX_COORD",
+								"from_instancer":false,
+								"label":"",
+								"mute":false,
+								"name":"Texture Coordinate",
+								"type":"TEX_COORD"
+							},
+							"image":null,
+							"color_ramp":null
+						},
+						{
+							"type":"MAPPING",
+							"name":"Mapping",
+							"inputs":[
+								{
+									"name":"Vector",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VECTOR",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Texture_Coordinate",
+										"socket_name":"UV",
+										"type":"VECTOR",
+										"socket_idx":2
+									},
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								},
+								{
+									"name":"Location",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VECTOR",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":1
+								},
+								{
+									"name":"Rotation",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VECTOR",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":2
+								},
+								{
+									"name":"Scale",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VECTOR",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":[
+										1.0,
+										1.0,
+										1.0
+									],
+									"index":3
+								}
+							],
+							"outputs":[
+								{
+									"name":"Vector",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeMapping",
+								"bl_label":"Mapping",
+								"bl_static_type":"MAPPING",
+								"label":"",
+								"mute":false,
+								"name":"Mapping",
+								"type":"MAPPING",
+								"vector_type":"POINT"
+							},
+							"image":null,
+							"color_ramp":null
+						},
+						{
+							"type":"REROUTE",
+							"name":"Reroute",
+							"inputs":[
+								{
+									"name":"Input",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VECTOR",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Mapping",
+										"socket_name":"Vector",
+										"type":"VECTOR",
+										"socket_idx":0
+									},
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"outputs":[
+								{
+									"name":"Output",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"props":{
+								"bl_idname":"NodeReroute",
+								"bl_label":"Reroute",
+								"bl_static_type":"REROUTE",
+								"label":"",
+								"mute":false,
+								"name":"Reroute",
+								"type":"REROUTE"
+							},
+							"image":null,
+							"color_ramp":null
+						},
+						{
+							"type":"TEX_IMAGE",
+							"name":"Image_Texture_001",
+							"inputs":[
+								{
+									"name":"Vector",
+									"enabled":true,
+									"hide":false,
+									"hide_value":true,
+									"type":"VECTOR",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Reroute",
+										"socket_name":"Output",
+										"type":"VECTOR",
+										"socket_idx":0
+									},
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"outputs":[
+								{
+									"name":"Color",
+									"type":"RGBA",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								},
+								{
+									"name":"Alpha",
+									"type":"VALUE",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":0.0,
+									"index":1
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeTexImage",
+								"bl_label":"Image Texture",
+								"bl_static_type":"TEX_IMAGE",
+								"extension":"REPEAT",
+								"interpolation":"Linear",
+								"label":"Base Color",
+								"mute":false,
+								"name":"Image Texture.001",
+								"projection":"FLAT",
+								"projection_blend":0.0,
+								"type":"TEX_IMAGE"
+							},
+							"image":{
+								"name":"DUV_Scratch_DGrey_BaseColor.png",
+								"file_format":"PNG",
+								"file_path":"//textures\\DUV_Scratch_DGrey_BaseColor.png",
+								"channels":4,
+								"alpha_mode":"STRAIGHT",
+								"color_space":"sRGB"
+							},
+							"color_ramp":null
+						},
+						{
+							"type":"TEX_IMAGE",
+							"name":"Image_Texture_003",
+							"inputs":[
+								{
+									"name":"Vector",
+									"enabled":true,
+									"hide":false,
+									"hide_value":true,
+									"type":"VECTOR",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Reroute",
+										"socket_name":"Output",
+										"type":"VECTOR",
+										"socket_idx":0
+									},
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"outputs":[
+								{
+									"name":"Color",
+									"type":"RGBA",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								},
+								{
+									"name":"Alpha",
+									"type":"VALUE",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":0.0,
+									"index":1
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeTexImage",
+								"bl_label":"Image Texture",
+								"bl_static_type":"TEX_IMAGE",
+								"extension":"REPEAT",
+								"interpolation":"Linear",
+								"label":"Roughness",
+								"mute":false,
+								"name":"Image Texture.003",
+								"projection":"FLAT",
+								"projection_blend":0.0,
+								"type":"TEX_IMAGE"
+							},
+							"image":{
+								"name":"DUV_Scratch_DGrey_Roughness.png",
+								"file_format":"PNG",
+								"file_path":"//textures\\DUV_Scratch_DGrey_Roughness.png",
+								"channels":4,
+								"alpha_mode":"STRAIGHT",
+								"color_space":"Non-Color"
+							},
+							"color_ramp":null
+						},
+						{
+							"type":"TEX_IMAGE",
+							"name":"Image_Texture_004",
+							"inputs":[
+								{
+									"name":"Vector",
+									"enabled":true,
+									"hide":false,
+									"hide_value":true,
+									"type":"VECTOR",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Reroute",
+										"socket_name":"Output",
+										"type":"VECTOR",
+										"socket_idx":0
+									},
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"outputs":[
+								{
+									"name":"Color",
+									"type":"RGBA",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								},
+								{
+									"name":"Alpha",
+									"type":"VALUE",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":0.0,
+									"index":1
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeTexImage",
+								"bl_label":"Image Texture",
+								"bl_static_type":"TEX_IMAGE",
+								"extension":"REPEAT",
+								"interpolation":"Linear",
+								"label":"Normal",
+								"mute":false,
+								"name":"Image Texture.004",
+								"projection":"FLAT",
+								"projection_blend":0.0,
+								"type":"TEX_IMAGE"
+							},
+							"image":{
+								"name":"DUV_Shiney_Silver__Normal.png",
+								"file_format":"PNG",
+								"file_path":"//textures\\DUV_Shiney_Silver__Normal.png",
+								"channels":4,
+								"alpha_mode":"STRAIGHT",
+								"color_space":"Non-Color"
+							},
+							"color_ramp":null
+						},
+						{
+							"type":"MATH",
+							"name":"Math_001",
+							"inputs":[
+								{
+									"name":"Value",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VALUE",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Image_Texture_001",
+										"socket_name":"Color",
+										"type":"RGBA",
+										"socket_idx":0
+									},
+									"default_value":0.5,
+									"index":0
+								},
+								{
+									"name":"Value",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VALUE",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":0.5,
+									"index":1
+								},
+								{
+									"name":"Value",
+									"enabled":false,
+									"hide":false,
+									"hide_value":false,
+									"type":"VALUE",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":0.5,
+									"index":2
+								}
+							],
+							"outputs":[
+								{
+									"name":"Value",
+									"type":"VALUE",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":0.0,
+									"index":0
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeMath",
+								"bl_label":"Math",
+								"bl_static_type":"MATH",
+								"label":"",
+								"mute":false,
+								"name":"Math.001",
+								"operation":"POWER",
+								"type":"MATH",
+								"use_clamp":false
+							},
+							"image":null,
+							"color_ramp":null
+						},
+						{
+							"type":"MIX",
+							"name":"Mix",
+							"inputs":[
+								{
+									"name":"Factor",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VALUE",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":1.0,
+									"index":0
+								},
+								{
+									"name":"Factor",
+									"enabled":false,
+									"hide":false,
+									"hide_value":false,
+									"type":"VECTOR",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":[
+										0.5,
+										0.5,
+										0.5
+									],
+									"index":1
+								},
+								{
+									"name":"A",
+									"enabled":false,
+									"hide":false,
+									"hide_value":false,
+									"type":"VALUE",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":0.0,
+									"index":2
+								},
+								{
+									"name":"B",
+									"enabled":false,
+									"hide":false,
+									"hide_value":false,
+									"type":"VALUE",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":0.0,
+									"index":3
+								},
+								{
+									"name":"A",
+									"enabled":false,
+									"hide":false,
+									"hide_value":false,
+									"type":"VECTOR",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":4
+								},
+								{
+									"name":"B",
+									"enabled":false,
+									"hide":false,
+									"hide_value":false,
+									"type":"VECTOR",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":5
+								},
+								{
+									"name":"A",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"RGBA",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Image_Texture_003",
+										"socket_name":"Color",
+										"type":"RGBA",
+										"socket_idx":0
+									},
+									"default_value":[
+										0.5,
+										0.5,
+										0.5,
+										1.0
+									],
+									"index":6
+								},
+								{
+									"name":"B",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"RGBA",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":[
+										0.33658865094184875,
+										0.33658865094184875,
+										0.33658865094184875,
+										1.0
+									],
+									"index":7
+								},
+								{
+									"name":"A",
+									"enabled":false,
+									"hide":false,
+									"hide_value":false,
+									"type":"ROTATION",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":8
+								},
+								{
+									"name":"B",
+									"enabled":false,
+									"hide":false,
+									"hide_value":false,
+									"type":"ROTATION",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":9
+								}
+							],
+							"outputs":[
+								{
+									"name":"Result",
+									"type":"VALUE",
+									"enabled":false,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":0.0,
+									"index":0
+								},
+								{
+									"name":"Result",
+									"type":"VECTOR",
+									"enabled":false,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":1
+								},
+								{
+									"name":"Result",
+									"type":"RGBA",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.800000011920929,
+										0.800000011920929,
+										0.800000011920929,
+										1.0
+									],
+									"index":2
+								},
+								{
+									"name":"Result",
+									"type":"ROTATION",
+									"enabled":false,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":3
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeMix",
+								"bl_label":"Mix",
+								"bl_static_type":"MIX",
+								"blend_type":"MULTIPLY",
+								"clamp_factor":true,
+								"clamp_result":false,
+								"data_type":"RGBA",
+								"factor_mode":"UNIFORM",
+								"label":"",
+								"mute":false,
+								"name":"Mix",
+								"type":"MIX"
+							},
+							"image":null,
+							"color_ramp":null
+						},
+						{
+							"type":"NORMAL_MAP",
+							"name":"Normal_Map",
+							"inputs":[
+								{
+									"name":"Strength",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VALUE",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":1.5,
+									"index":0
+								},
+								{
+									"name":"Color",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"RGBA",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Image_Texture_004",
+										"socket_name":"Color",
+										"type":"RGBA",
+										"socket_idx":0
+									},
+									"default_value":[
+										0.5,
+										0.5,
+										1.0,
+										1.0
+									],
+									"index":1
+								}
+							],
+							"outputs":[
+								{
+									"name":"Normal",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeNormalMap",
+								"bl_label":"Normal Map",
+								"bl_static_type":"NORMAL_MAP",
+								"label":"",
+								"mute":false,
+								"name":"Normal Map",
+								"space":"TANGENT",
+								"type":"NORMAL_MAP",
+								"uv_map":""
+							},
+							"image":null,
+							"color_ramp":null
+						},
+						{
+							"type":"MATH",
+							"name":"Math",
+							"inputs":[
+								{
+									"name":"Value",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VALUE",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Math_001",
+										"socket_name":"Value",
+										"type":"VALUE",
+										"socket_idx":0
+									},
+									"default_value":0.5,
+									"index":0
+								},
+								{
+									"name":"Value",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VALUE",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":0.24000000953674316,
+									"index":1
+								},
+								{
+									"name":"Value",
+									"enabled":false,
+									"hide":false,
+									"hide_value":false,
+									"type":"VALUE",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":0.5,
+									"index":2
+								}
+							],
+							"outputs":[
+								{
+									"name":"Value",
+									"type":"VALUE",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":0.0,
+									"index":0
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeMath",
+								"bl_label":"Math",
+								"bl_static_type":"MATH",
+								"label":"",
+								"mute":false,
+								"name":"Math",
+								"operation":"MULTIPLY",
+								"type":"MATH",
+								"use_clamp":false
+							},
+							"image":null,
+							"color_ramp":null
+						},
 						{
 							"type":"BSDF_PRINCIPLED",
 							"name":"Principled_BSDF",
@@ -2830,12 +4067,17 @@
 									"hide":false,
 									"hide_value":false,
 									"type":"RGBA",
-									"is_linked":false,
-									"from_socket":null,
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Math",
+										"socket_name":"Value",
+										"type":"VALUE",
+										"socket_idx":0
+									},
 									"default_value":[
-										0.020828882232308388,
-										0.020828882232308388,
-										0.020828882232308388,
+										0.10226668417453766,
+										0.10226668417453766,
+										0.10226668417453766,
 										1.0
 									],
 									"index":0
@@ -2857,9 +4099,14 @@
 									"hide":false,
 									"hide_value":false,
 									"type":"VALUE",
-									"is_linked":false,
-									"from_socket":null,
-									"default_value":0.3717201054096222,
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Mix",
+										"socket_name":"Result",
+										"type":"RGBA",
+										"socket_idx":2
+									},
+									"default_value":0.0,
 									"index":2
 								},
 								{
@@ -2870,7 +4117,7 @@
 									"type":"VALUE",
 									"is_linked":false,
 									"from_socket":null,
-									"default_value":1.5,
+									"default_value":1.4500000476837158,
 									"index":3
 								},
 								{
@@ -2890,8 +4137,13 @@
 									"hide":false,
 									"hide_value":true,
 									"type":"VECTOR",
-									"is_linked":false,
-									"from_socket":null,
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Normal_Map",
+										"socket_name":"Normal",
+										"type":"VECTOR",
+										"socket_idx":0
+									},
 									"default_value":[
 										0.0,
 										0.0,
@@ -2949,7 +4201,7 @@
 								},
 								{
 									"name":"Subsurface IOR",
-									"enabled":false,
+									"enabled":true,
 									"hide":false,
 									"hide_value":false,
 									"type":"VALUE",
@@ -3155,9 +4407,9 @@
 									"is_linked":false,
 									"from_socket":null,
 									"default_value":[
-										1.0,
-										1.0,
-										1.0,
+										0.0,
+										0.0,
+										0.0,
 										1.0
 									],
 									"index":26
@@ -3170,7 +4422,7 @@
 									"type":"VALUE",
 									"is_linked":false,
 									"from_socket":null,
-									"default_value":0.0,
+									"default_value":1.0,
 									"index":27
 								},
 								{
@@ -3212,11 +4464,11 @@
 								"bl_idname":"ShaderNodeBsdfPrincipled",
 								"bl_label":"Principled BSDF",
 								"bl_static_type":"BSDF_PRINCIPLED",
-								"distribution":"MULTI_GGX",
+								"distribution":"GGX",
 								"label":"",
 								"mute":false,
 								"name":"Principled BSDF",
-								"subsurface_method":"RANDOM_WALK",
+								"subsurface_method":"RANDOM_WALK_SKIN",
 								"type":"BSDF_PRINCIPLED"
 							},
 							"image":null,
@@ -3296,27 +4548,826 @@
 							"color_ramp":null
 						}
 					],
-					"material_name":"outer",
-					"material_graph_hash":"1453693420052717946",
-					"material_graph_archetype_hash":"7077137593572231244"
+					"material_name":"DUV_Scratch_DGrey",
+					"material_graph_hash":"-8265470286599794750",
+					"material_graph_archetype_hash":"-3422819607721515078"
 				}
 			},
-			"name":"outer",
+			"name":"DUV_Scratch_DGrey",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.020828882232308388,
-					0.020828882232308388,
-					0.020828882232308388,
+					0.10226668417453766,
+					0.10226668417453766,
+					0.10226668417453766,
 					1
-				],
-				"roughnessFactor":0.3717201054096222
+				]
 			}
 		},
 		{
 			"doubleSided":true,
 			"extras":{
+				"DM":{},
+				"terrain_settings":{},
 				"bs13_material_graph":{
 					"graph":[
+						{
+							"type":"TEX_COORD",
+							"name":"Texture_Coordinate",
+							"inputs":[],
+							"outputs":[
+								{
+									"name":"Generated",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								},
+								{
+									"name":"Normal",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":1
+								},
+								{
+									"name":"UV",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":2
+								},
+								{
+									"name":"Object",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":3
+								},
+								{
+									"name":"Camera",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":4
+								},
+								{
+									"name":"Window",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":5
+								},
+								{
+									"name":"Reflection",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":6
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeTexCoord",
+								"bl_label":"Texture Coordinate",
+								"bl_static_type":"TEX_COORD",
+								"from_instancer":false,
+								"label":"",
+								"mute":false,
+								"name":"Texture Coordinate",
+								"type":"TEX_COORD"
+							},
+							"image":null,
+							"color_ramp":null
+						},
+						{
+							"type":"MAPPING",
+							"name":"Mapping",
+							"inputs":[
+								{
+									"name":"Vector",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VECTOR",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Texture_Coordinate",
+										"socket_name":"UV",
+										"type":"VECTOR",
+										"socket_idx":2
+									},
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								},
+								{
+									"name":"Location",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VECTOR",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":1
+								},
+								{
+									"name":"Rotation",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VECTOR",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":2
+								},
+								{
+									"name":"Scale",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VECTOR",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":[
+										1.0,
+										1.0,
+										1.0
+									],
+									"index":3
+								}
+							],
+							"outputs":[
+								{
+									"name":"Vector",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeMapping",
+								"bl_label":"Mapping",
+								"bl_static_type":"MAPPING",
+								"label":"",
+								"mute":false,
+								"name":"Mapping",
+								"type":"MAPPING",
+								"vector_type":"POINT"
+							},
+							"image":null,
+							"color_ramp":null
+						},
+						{
+							"type":"REROUTE",
+							"name":"Reroute",
+							"inputs":[
+								{
+									"name":"Input",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VECTOR",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Mapping",
+										"socket_name":"Vector",
+										"type":"VECTOR",
+										"socket_idx":0
+									},
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"outputs":[
+								{
+									"name":"Output",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"props":{
+								"bl_idname":"NodeReroute",
+								"bl_label":"Reroute",
+								"bl_static_type":"REROUTE",
+								"label":"",
+								"mute":false,
+								"name":"Reroute",
+								"type":"REROUTE"
+							},
+							"image":null,
+							"color_ramp":null
+						},
+						{
+							"type":"TEX_IMAGE",
+							"name":"Image_Texture_002",
+							"inputs":[
+								{
+									"name":"Vector",
+									"enabled":true,
+									"hide":false,
+									"hide_value":true,
+									"type":"VECTOR",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Reroute",
+										"socket_name":"Output",
+										"type":"VECTOR",
+										"socket_idx":0
+									},
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"outputs":[
+								{
+									"name":"Color",
+									"type":"RGBA",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								},
+								{
+									"name":"Alpha",
+									"type":"VALUE",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":0.0,
+									"index":1
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeTexImage",
+								"bl_label":"Image Texture",
+								"bl_static_type":"TEX_IMAGE",
+								"extension":"REPEAT",
+								"interpolation":"Linear",
+								"label":"Metallic",
+								"mute":false,
+								"name":"Image Texture.002",
+								"projection":"FLAT",
+								"projection_blend":0.0,
+								"type":"TEX_IMAGE"
+							},
+							"image":{
+								"name":"DUV_Shiney_Silver__Metallic.png",
+								"file_format":"PNG",
+								"file_path":"//textures\\DUV_Shiney_Silver__Metallic.png",
+								"channels":4,
+								"alpha_mode":"STRAIGHT",
+								"color_space":"Non-Color"
+							},
+							"color_ramp":null
+						},
+						{
+							"type":"TEX_IMAGE",
+							"name":"Image_Texture_003",
+							"inputs":[
+								{
+									"name":"Vector",
+									"enabled":true,
+									"hide":false,
+									"hide_value":true,
+									"type":"VECTOR",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Reroute",
+										"socket_name":"Output",
+										"type":"VECTOR",
+										"socket_idx":0
+									},
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"outputs":[
+								{
+									"name":"Color",
+									"type":"RGBA",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								},
+								{
+									"name":"Alpha",
+									"type":"VALUE",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":0.0,
+									"index":1
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeTexImage",
+								"bl_label":"Image Texture",
+								"bl_static_type":"TEX_IMAGE",
+								"extension":"REPEAT",
+								"interpolation":"Linear",
+								"label":"Roughness",
+								"mute":false,
+								"name":"Image Texture.003",
+								"projection":"FLAT",
+								"projection_blend":0.0,
+								"type":"TEX_IMAGE"
+							},
+							"image":{
+								"name":"DUV_Shiney_Silver__Roughness.png",
+								"file_format":"PNG",
+								"file_path":"//textures\\DUV_Shiney_Silver__Roughness.png",
+								"channels":4,
+								"alpha_mode":"STRAIGHT",
+								"color_space":"Non-Color"
+							},
+							"color_ramp":null
+						},
+						{
+							"type":"TEX_IMAGE",
+							"name":"Image_Texture_004",
+							"inputs":[
+								{
+									"name":"Vector",
+									"enabled":true,
+									"hide":false,
+									"hide_value":true,
+									"type":"VECTOR",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Reroute",
+										"socket_name":"Output",
+										"type":"VECTOR",
+										"socket_idx":0
+									},
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"outputs":[
+								{
+									"name":"Color",
+									"type":"RGBA",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								},
+								{
+									"name":"Alpha",
+									"type":"VALUE",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":0.0,
+									"index":1
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeTexImage",
+								"bl_label":"Image Texture",
+								"bl_static_type":"TEX_IMAGE",
+								"extension":"REPEAT",
+								"interpolation":"Linear",
+								"label":"Normal",
+								"mute":false,
+								"name":"Image Texture.004",
+								"projection":"FLAT",
+								"projection_blend":0.0,
+								"type":"TEX_IMAGE"
+							},
+							"image":{
+								"name":"DUV_Shiney_Silver__Normal.png",
+								"file_format":"PNG",
+								"file_path":"//textures\\DUV_Shiney_Silver__Normal.png",
+								"channels":4,
+								"alpha_mode":"STRAIGHT",
+								"color_space":"Non-Color"
+							},
+							"color_ramp":null
+						},
+						{
+							"type":"TEX_IMAGE",
+							"name":"Image_Texture_005",
+							"inputs":[
+								{
+									"name":"Vector",
+									"enabled":true,
+									"hide":false,
+									"hide_value":true,
+									"type":"VECTOR",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Reroute",
+										"socket_name":"Output",
+										"type":"VECTOR",
+										"socket_idx":0
+									},
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"outputs":[
+								{
+									"name":"Color",
+									"type":"RGBA",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								},
+								{
+									"name":"Alpha",
+									"type":"VALUE",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":0.0,
+									"index":1
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeTexImage",
+								"bl_label":"Image Texture",
+								"bl_static_type":"TEX_IMAGE",
+								"extension":"REPEAT",
+								"interpolation":"Linear",
+								"label":"Emission",
+								"mute":false,
+								"name":"Image Texture.005",
+								"projection":"FLAT",
+								"projection_blend":0.0,
+								"type":"TEX_IMAGE"
+							},
+							"image":{
+								"name":"DUV_Shiney_Silver__Emissive.png",
+								"file_format":"PNG",
+								"file_path":"//textures\\DUV_Shiney_Silver__Emissive.png",
+								"channels":4,
+								"alpha_mode":"STRAIGHT",
+								"color_space":"sRGB"
+							},
+							"color_ramp":null
+						},
+						{
+							"type":"TEX_IMAGE",
+							"name":"Image_Texture",
+							"inputs":[
+								{
+									"name":"Vector",
+									"enabled":true,
+									"hide":false,
+									"hide_value":true,
+									"type":"VECTOR",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Reroute",
+										"socket_name":"Output",
+										"type":"VECTOR",
+										"socket_idx":0
+									},
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"outputs":[
+								{
+									"name":"Color",
+									"type":"RGBA",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								},
+								{
+									"name":"Alpha",
+									"type":"VALUE",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":false,
+									"default_value":0.0,
+									"index":1
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeTexImage",
+								"bl_label":"Image Texture",
+								"bl_static_type":"TEX_IMAGE",
+								"extension":"REPEAT",
+								"interpolation":"Linear",
+								"label":"Displacement",
+								"mute":false,
+								"name":"Image Texture",
+								"projection":"FLAT",
+								"projection_blend":0.0,
+								"type":"TEX_IMAGE"
+							},
+							"image":{
+								"name":"DUV_Shiney_Silver__Height.png",
+								"file_format":"PNG",
+								"file_path":"//textures\\DUV_Shiney_Silver__Height.png",
+								"channels":4,
+								"alpha_mode":"STRAIGHT",
+								"color_space":"Non-Color"
+							},
+							"color_ramp":null
+						},
+						{
+							"type":"NORMAL_MAP",
+							"name":"Normal_Map",
+							"inputs":[
+								{
+									"name":"Strength",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VALUE",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":1.0,
+									"index":0
+								},
+								{
+									"name":"Color",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"RGBA",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Image_Texture_004",
+										"socket_name":"Color",
+										"type":"RGBA",
+										"socket_idx":0
+									},
+									"default_value":[
+										0.5,
+										0.5,
+										1.0,
+										1.0
+									],
+									"index":1
+								}
+							],
+							"outputs":[
+								{
+									"name":"Normal",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeNormalMap",
+								"bl_label":"Normal Map",
+								"bl_static_type":"NORMAL_MAP",
+								"label":"",
+								"mute":false,
+								"name":"Normal Map",
+								"space":"TANGENT",
+								"type":"NORMAL_MAP",
+								"uv_map":""
+							},
+							"image":null,
+							"color_ramp":null
+						},
+						{
+							"type":"DISPLACEMENT",
+							"name":"Displacement",
+							"inputs":[
+								{
+									"name":"Height",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VALUE",
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Image_Texture",
+										"socket_name":"Color",
+										"type":"RGBA",
+										"socket_idx":0
+									},
+									"default_value":0.0,
+									"index":0
+								},
+								{
+									"name":"Midlevel",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VALUE",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":0.5,
+									"index":1
+								},
+								{
+									"name":"Scale",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"type":"VALUE",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":1.0,
+									"index":2
+								},
+								{
+									"name":"Normal",
+									"enabled":true,
+									"hide":false,
+									"hide_value":true,
+									"type":"VECTOR",
+									"is_linked":false,
+									"from_socket":null,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":3
+								}
+							],
+							"outputs":[
+								{
+									"name":"Displacement",
+									"type":"VECTOR",
+									"enabled":true,
+									"hide":false,
+									"hide_value":false,
+									"is_linked":true,
+									"default_value":[
+										0.0,
+										0.0,
+										0.0
+									],
+									"index":0
+								}
+							],
+							"props":{
+								"bl_idname":"ShaderNodeDisplacement",
+								"bl_label":"Displacement",
+								"bl_static_type":"DISPLACEMENT",
+								"label":"",
+								"mute":false,
+								"name":"Displacement",
+								"space":"OBJECT",
+								"type":"DISPLACEMENT"
+							},
+							"image":null,
+							"color_ramp":null
+						},
 						{
 							"type":"BSDF_PRINCIPLED",
 							"name":"Principled_BSDF",
@@ -3330,9 +5381,9 @@
 									"is_linked":false,
 									"from_socket":null,
 									"default_value":[
-										0.413099080324173,
-										0.413099080324173,
-										0.413099080324173,
+										0.2524028420448303,
+										0.2524028420448303,
+										0.2524028420448303,
 										1.0
 									],
 									"index":0
@@ -3343,9 +5394,14 @@
 									"hide":false,
 									"hide_value":false,
 									"type":"VALUE",
-									"is_linked":false,
-									"from_socket":null,
-									"default_value":1.0,
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Image_Texture_002",
+										"socket_name":"Color",
+										"type":"RGBA",
+										"socket_idx":0
+									},
+									"default_value":0.0,
 									"index":1
 								},
 								{
@@ -3354,9 +5410,14 @@
 									"hide":false,
 									"hide_value":false,
 									"type":"VALUE",
-									"is_linked":false,
-									"from_socket":null,
-									"default_value":0.10641398280858994,
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Image_Texture_003",
+										"socket_name":"Color",
+										"type":"RGBA",
+										"socket_idx":0
+									},
+									"default_value":0.0,
 									"index":2
 								},
 								{
@@ -3367,7 +5428,7 @@
 									"type":"VALUE",
 									"is_linked":false,
 									"from_socket":null,
-									"default_value":1.5,
+									"default_value":1.4500000476837158,
 									"index":3
 								},
 								{
@@ -3387,8 +5448,13 @@
 									"hide":false,
 									"hide_value":true,
 									"type":"VECTOR",
-									"is_linked":false,
-									"from_socket":null,
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Normal_Map",
+										"socket_name":"Normal",
+										"type":"VECTOR",
+										"socket_idx":0
+									},
 									"default_value":[
 										0.0,
 										0.0,
@@ -3446,7 +5512,7 @@
 								},
 								{
 									"name":"Subsurface IOR",
-									"enabled":false,
+									"enabled":true,
 									"hide":false,
 									"hide_value":false,
 									"type":"VALUE",
@@ -3649,12 +5715,17 @@
 									"hide":false,
 									"hide_value":false,
 									"type":"RGBA",
-									"is_linked":false,
-									"from_socket":null,
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Image_Texture_005",
+										"socket_name":"Color",
+										"type":"RGBA",
+										"socket_idx":0
+									},
 									"default_value":[
-										1.0,
-										1.0,
-										1.0,
+										0.0,
+										0.0,
+										0.0,
 										1.0
 									],
 									"index":26
@@ -3667,7 +5738,7 @@
 									"type":"VALUE",
 									"is_linked":false,
 									"from_socket":null,
-									"default_value":0.0,
+									"default_value":1.0,
 									"index":27
 								},
 								{
@@ -3709,11 +5780,11 @@
 								"bl_idname":"ShaderNodeBsdfPrincipled",
 								"bl_label":"Principled BSDF",
 								"bl_static_type":"BSDF_PRINCIPLED",
-								"distribution":"MULTI_GGX",
+								"distribution":"GGX",
 								"label":"",
 								"mute":false,
 								"name":"Principled BSDF",
-								"subsurface_method":"RANDOM_WALK",
+								"subsurface_method":"RANDOM_WALK_SKIN",
 								"type":"BSDF_PRINCIPLED"
 							},
 							"image":null,
@@ -3756,8 +5827,13 @@
 									"hide":false,
 									"hide_value":true,
 									"type":"VECTOR",
-									"is_linked":false,
-									"from_socket":null,
+									"is_linked":true,
+									"from_socket":{
+										"node_name":"Displacement",
+										"socket_name":"Displacement",
+										"type":"VECTOR",
+										"socket_idx":0
+									},
 									"default_value":[
 										0.0,
 										0.0,
@@ -3793,20 +5869,19 @@
 							"color_ramp":null
 						}
 					],
-					"material_name":"barrels",
-					"material_graph_hash":"-5532356250312177226",
-					"material_graph_archetype_hash":"-629256930996922643"
+					"material_name":"DUV_Shiney_Silver",
+					"material_graph_hash":"7407271494647266105",
+					"material_graph_archetype_hash":"5708003364519119601"
 				}
 			},
-			"name":"barrels",
+			"name":"DUV_Shiney_Silver",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.413099080324173,
-					0.413099080324173,
-					0.413099080324173,
+					0.2524028420448303,
+					0.2524028420448303,
+					0.2524028420448303,
 					1
-				],
-				"roughnessFactor":0.10641398280858994
+				]
 			}
 		}
 	],
@@ -3892,6 +5967,24 @@
 					},
 					"indices":23,
 					"material":2
+				}
+			]
+		},
+		{
+			"extras":{
+				"hops":{},
+				"bc":{}
+			},
+			"name":"Plane.020",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":24,
+						"NORMAL":25,
+						"TEXCOORD_0":26
+					},
+					"indices":27,
+					"material":3
 				}
 			]
 		}
@@ -4100,6 +6193,40 @@
 			"componentType":5123,
 			"count":3444,
 			"type":"SCALAR"
+		},
+		{
+			"bufferView":24,
+			"componentType":5126,
+			"count":72,
+			"max":[
+				1,
+				0,
+				1
+			],
+			"min":[
+				-1,
+				0,
+				-1
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":25,
+			"componentType":5126,
+			"count":72,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":26,
+			"componentType":5126,
+			"count":72,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":27,
+			"componentType":5123,
+			"count":336,
+			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
@@ -4246,11 +6373,35 @@
 			"byteLength":6888,
 			"byteOffset":151284,
 			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":864,
+			"byteOffset":158172,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":864,
+			"byteOffset":159036,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":576,
+			"byteOffset":159900,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":672,
+			"byteOffset":160476,
+			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":158172,
+			"byteLength":161148,
 			"uri":"lmg.bin"
 		}
 	]

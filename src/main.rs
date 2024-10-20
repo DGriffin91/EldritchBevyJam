@@ -44,6 +44,7 @@ use physics::{AddTrimeshPhysics, PhysicsStuff};
 fn main() {
     let mut app = App::new();
     app.insert_resource(Msaa::Off)
+        .insert_resource(ClearColor(Color::srgb(0.1, 0.03, 0.03)))
         .insert_resource(AmbientLight::NONE)
         // TODO include compressed textures?
         .insert_resource(MipmapGeneratorSettings {
@@ -98,45 +99,69 @@ fn main() {
                 .load_collection::<AudioAssets>()
                 .load_collection::<MeshAssets>()
                 .load_collection::<GunSceneAssets>(),
-        )
-        .add_systems(OnEnter(GameLoading::Loaded), start_cooking);
+        );
 
     app.add_systems(Startup, setup)
+        .add_systems(OnEnter(GameLoading::Loaded), level_c)
         .add_systems(Update, generate_mipmaps::<AllDynMaterialImagesMaterial>)
         .run();
 }
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    //commands
+    //    .spawn(SceneBundle {
+    //        scene: asset_server.load("temp/init_test_scene.gltf#Scene0"),
+    //        ..default()
+    //    })
+    //    .insert(PropagateToName(
+    //        AddTrimeshPhysics,
+    //        Cow::Borrowed("COLLIDER"),
+    //    ));
+    //
+    //commands.spawn(SceneBundle {
+    //    scene: mesh_assets.level_c.clone(),
+    //    ..default()
+    //});
+    //.insert(PropagateToName(
+    //    AddTrimeshPhysics,
+    //    Cow::Borrowed("COLLIDER"),
+    //));
+
+    commands.spawn(DirectionalLightBundle {
+        transform: Transform::from_rotation(Quat::from_euler(
+            EulerRot::XYZ,
+            PI * -0.6,
+            PI * 0.3,
+            0.0,
+        )),
+        directional_light: DirectionalLight {
+            shadows_enabled: true,
+            illuminance: 8500.0,
+            shadow_depth_bias: 0.8,
+            shadow_normal_bias: 0.8,
+            color: Color::srgb(1.0, 0.4, 0.0),
+            ..default()
+        },
+        cascade_shadow_config: CascadeShadowConfigBuilder {
+            num_cascades: 1,
+            maximum_distance: 280.0,
+            ..default()
+        }
+        .into(),
+        ..default()
+    });
+}
+
+fn level_c(mut commands: Commands, mesh_assets: Res<MeshAssets>) {
     commands
         .spawn(SceneBundle {
-            scene: asset_server.load("temp/init_test_scene.gltf#Scene0"),
+            scene: mesh_assets.level_c.clone(),
             ..default()
         })
         .insert(PropagateToName(
             AddTrimeshPhysics,
             Cow::Borrowed("COLLIDER"),
         ));
-
-    commands.spawn(DirectionalLightBundle {
-        transform: Transform::from_rotation(Quat::from_euler(
-            EulerRot::XYZ,
-            PI * -0.15,
-            PI * 0.13,
-            0.0,
-        )),
-        directional_light: DirectionalLight {
-            shadows_enabled: true,
-            illuminance: light_consts::lux::CIVIL_TWILIGHT,
-            ..default()
-        },
-        cascade_shadow_config: CascadeShadowConfigBuilder {
-            num_cascades: 1,
-            maximum_distance: 40.0,
-            ..default()
-        }
-        .into(),
-        ..default()
-    });
 }
 
 #[derive(Resource)]

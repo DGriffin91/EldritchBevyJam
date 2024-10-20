@@ -36,7 +36,7 @@ pub fn setup_trimesh_colliders(
                     // TODO seems inefficient if there are multiple instances of the same trimesh collider
                     commands.entity(entity).insert((
                         Collider::from_bevy_mesh(mesh, &ComputedColliderShape::TriMesh).unwrap(),
-                        RigidBody::Fixed,
+                        //RigidBody::Fixed, // Seemed to be moving some objects or something, but collision works without
                     ));
                 }
             });

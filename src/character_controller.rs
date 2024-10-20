@@ -13,6 +13,7 @@ use bs13::bs13_render::ssao::Ssao;
 use bs13::bs13_render::taa::TaaBundle;
 use bs13::bs13_render::GpuCull;
 use bs13_render::frame_pyramid::FramePyramid;
+use bs13_render::ssr::Ssr;
 use bs13_render::DepthPrepassForDeferred;
 use std::f32::consts::TAU;
 
@@ -67,8 +68,12 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
                 ..default()
             },
             FpsController {
+                max_air_speed: 60.0,
                 air_acceleration: 150.0,
-                jump_speed: 10.0,
+                jump_speed: 15.0,
+                run_speed: 50.0,
+                walk_speed: 10.0,
+                //gravity: 0.0,
                 ..default()
             },
         ))
@@ -98,6 +103,7 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
             DepthPrepass,
             DeferredPrepass,
             Ssao,
+            Ssr,
             GpuCull {
                 frustum: true,
                 occlusion: true,

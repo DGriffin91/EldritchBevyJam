@@ -12,4 +12,7 @@ pub struct MeshAssets {
     pub fox: Handle<Scene>,
     #[asset(path = "temp/panStew.glb#Scene0")]
     pub pan_stew: Handle<Scene>,
+
+    #[asset(path = "temp/level_c.gltf#Scene0")]
+    pub level_c: Handle<Scene>,
 }
