@@ -1384,7 +1384,7 @@ dependencies = [
 [[package]]
 name = "bs13"
 version = "0.1.0"
-source = "git+https://github.com/DGriffin91/bs13#0ba2cb7ee75aa970f79d9e94de4ac53eef873771"
+source = "git+https://github.com/DGriffin91/bs13#ce40ef3494d430ae6bf23c09d8c4b638a5f09c92"
 dependencies = [
  "bevy",
  "bevy_basic_camera",
@@ -1404,7 +1404,7 @@ dependencies = [
 [[package]]
 name = "bs13_core"
 version = "0.1.0"
-source = "git+https://github.com/DGriffin91/bs13#0ba2cb7ee75aa970f79d9e94de4ac53eef873771"
+source = "git+https://github.com/DGriffin91/bs13#ce40ef3494d430ae6bf23c09d8c4b638a5f09c92"
 dependencies = [
  "bevy",
  "crossbeam-channel",
@@ -1417,7 +1417,7 @@ dependencies = [
 [[package]]
 name = "bs13_egui"
 version = "0.1.0"
-source = "git+https://github.com/DGriffin91/bs13#0ba2cb7ee75aa970f79d9e94de4ac53eef873771"
+source = "git+https://github.com/DGriffin91/bs13#ce40ef3494d430ae6bf23c09d8c4b638a5f09c92"
 dependencies = [
  "bevy",
  "bevy_egui",
@@ -1435,7 +1435,7 @@ dependencies = [
 [[package]]
 name = "bs13_render"
 version = "0.1.0"
-source = "git+https://github.com/DGriffin91/bs13#0ba2cb7ee75aa970f79d9e94de4ac53eef873771"
+source = "git+https://github.com/DGriffin91/bs13#ce40ef3494d430ae6bf23c09d8c4b638a5f09c92"
 dependencies = [
  "bevy",
  "bevy_mod_mesh_tools",
@@ -1507,9 +1507,9 @@ checksum = "8f1fe948ff07f4bd06c30984e69f5b4899c516a3ef74f34df92a2df2ab535495"
 
 [[package]]
 name = "bytes"
-version = "1.7.2"
+version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "428d9aa8fbc0670b7b8d6030a7fadd0f86151cae55e4dbbece15f3780a3dfaf3"
+checksum = "9ac0150caa2ae65ca5bd83f25c7de183dea78d4d366469f148435e2acfbad0da"
 
 [[package]]
 name = "calloop"
@@ -2938,9 +2938,9 @@ checksum = "d0263a3d970d5c054ed9312c0057b4f3bde9c0b33836d3637361d4a9e6e7a408"
 
 [[package]]
 name = "immutable-chunkmap"
-version = "2.0.5"
+version = "2.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4419f022e55cc63d5bbd6b44b71e1d226b9c9480a47824c706e9d54e5c40c5eb"
+checksum = "12f97096f508d54f8f8ab8957862eee2ccd628847b6217af1a335e1c44dee578"
 dependencies = [
  "arrayvec",
 ]
