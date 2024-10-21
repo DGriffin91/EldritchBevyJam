@@ -31,6 +31,8 @@ impl Plugin for SpiderUnitPlugin {
     }
 }
 
+const SPIDER_SCALE: f32 = 0.5;
+
 #[derive(Component, Clone, Debug)]
 pub struct SpiderUnit {
     pub action: SpiderAction,
@@ -86,7 +88,8 @@ fn ui_example_system(
             let mut ecmds = commands.spawn((
                 SceneBundle {
                     scene: mesh_assets.spider.clone(),
-                    transform: Transform::from_xyz(0.0, 0.0, -180.0),
+                    transform: Transform::from_xyz(0.0, 0.0, -180.0)
+                        .with_scale(Vec3::splat(SPIDER_SCALE)),
                     ..default()
                 },
                 SpiderUnit::default(),
@@ -159,6 +162,8 @@ fn move_to_player(
 
     let dest = player.translation;
     let attack_dist = 8.0;
+    let base_walk_speed = 10.0;
+    let base_turn_speed = 3.0;
 
     for (mut unit_trans, anim_child, mut unit) in &mut units {
         if let Ok((mut transitions, anim, _spider_unit, mut player)) =
@@ -196,7 +201,7 @@ fn move_to_player(
             } else if !should_attack && !player.playing(dir_anim_index) && need_to_turn {
                 player.play(dir_anim_index, 0.1, 1.0, true);
             } else if !should_attack && !player.playing("Wandering_Walk_Cycle") && should_pursue {
-                player.play("Wandering_Walk_Cycle", 0.1, 4.0, true);
+                player.play("Wandering_Walk_Cycle", 0.1, 6.0, true);
             }
 
             if player.playing("Attack") {
@@ -213,29 +218,29 @@ fn move_to_player(
             } else if player.playing("Wandering_Walk_Cycle") {
                 unit.action = SpiderAction::Walk;
 
-                let base_walk_speed = 7.0;
-
                 let active_anim = player.animation("Wandering_Walk_Cycle").unwrap();
 
                 let current_y = unit_trans.translation.y;
 
                 let anim_speed = active_anim.speed();
-                unit_trans.translation += to_dest * dt * base_walk_speed * anim_speed;
+                unit_trans.translation +=
+                    to_dest * SPIDER_SCALE * dt * base_walk_speed * anim_speed;
                 let dest_rot = unit_trans.looking_at(vec3(dest.x, current_y, dest.z), Vec3::Y);
 
                 unit_trans.rotation = unit_trans
                     .rotation
-                    .lerp(dest_rot.rotation, (0.1 * anim_speed).clamp(0.0, 1.0));
+                    .lerp(dest_rot.rotation, (dt * anim_speed).clamp(0.0, 1.0));
             } else if player.playing(dir_anim_index) {
                 unit.action = SpiderAction::Rotate;
 
-                let base_turn_speed = 3.0 * need_to_rotate_dir.signum();
+                let turn_sign = need_to_rotate_dir.signum();
 
                 let active_anim = player.animation(dir_anim_index).unwrap();
 
                 let anim_speed = active_anim.speed();
 
-                unit_trans.rotate_local_y(dt * base_turn_speed * anim_speed * TAU);
+                //SPIDER_SCALE * // Small things don't turn slower
+                unit_trans.rotate_local_y(dt * base_turn_speed * turn_sign * anim_speed * TAU);
             }
         }
     }
