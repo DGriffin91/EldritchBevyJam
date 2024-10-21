@@ -6,11 +6,11 @@ use std::{
 use crate::{
     animation::{init_animation_graph, AnimClips, AnimPlayerController, AnimationIndices},
     mesh_assets::MeshAssets,
-    util::{pfract, propagate, Propagate, FRAC_1_TAU},
+    util::{pfract, propagate, propagate_default, Propagate, PropagateDefault, FRAC_1_TAU},
     GameLoading,
 };
 
-use bevy::{math::vec3, prelude::*};
+use bevy::{math::vec3, prelude::*, render::view::NoFrustumCulling};
 use bevy_egui::{egui, EguiContexts};
 
 pub struct PlumUnitPlugin;
@@ -20,6 +20,7 @@ impl Plugin for PlumUnitPlugin {
             Update,
             (
                 propagate::<PlumUnitAnim, AnimationPlayer>,
+                propagate_default::<NoFrustumCulling, Handle<Mesh>>,
                 init_animation_graph::<PlumUnitAnim>,
                 ui_example_system,
                 put_self_on_parent,
@@ -90,6 +91,8 @@ fn ui_example_system(
                     ..default()
                 },
                 PlumUnit::default(),
+                NoFrustumCulling,
+                PropagateDefault(NoFrustumCulling),
             ));
             ecmds.insert(Propagate(PlumUnitAnim {
                 main_entity: ecmds.id(),
@@ -201,11 +204,16 @@ fn move_to_player(
 
                 let active_anim = player.animation("Attack").unwrap();
                 let anim_speed = active_anim.speed();
-                let dest_rot =
-                    unit_trans.looking_at(vec3(dest.x, unit_trans.translation.y, dest.z), Vec3::Y);
-                unit_trans.rotation = unit_trans
-                    .rotation
-                    .lerp(dest_rot.rotation, (0.15 * anim_speed).clamp(0.0, 1.0));
+
+                if active_anim.is_finished() {
+                    dbg!("BOOM");
+                } else {
+                    let dest_rot = unit_trans
+                        .looking_at(vec3(dest.x, unit_trans.translation.y, dest.z), Vec3::Y);
+                    unit_trans.rotation = unit_trans
+                        .rotation
+                        .lerp(dest_rot.rotation, (0.15 * anim_speed).clamp(0.0, 1.0));
+                }
             } else if player.playing("Fast_Walk_Cycle") {
                 unit.action = PlumAction::Walk;
 

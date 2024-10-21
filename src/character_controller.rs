@@ -105,7 +105,7 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
             Ssao,
             Ssr,
             GpuCull {
-                frustum: true,
+                frustum: false, // CPU is culling and we use no frustum culling on some things
                 occlusion: true,
             },
             DepthPrepassForDeferred {

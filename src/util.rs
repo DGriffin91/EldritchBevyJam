@@ -44,6 +44,33 @@ pub fn propagate<T: Component + Clone, C: Component>(
 }
 
 #[derive(Component)]
+/// Propagate T to all children that have component C, don't forget to add the generic system! propagate_default::<T, C>
+pub struct PropagateDefault<T: Component + Default>(pub T);
+
+pub fn propagate_default<T: Component + Default, C: Component>(
+    mut commands: Commands,
+    mut entities: Query<Entity, With<PropagateDefault<T>>>,
+    children_query: Query<&Children>,
+    has_needle_component: Query<&C>,
+) {
+    for entity in &mut entities {
+        let mut found = false;
+        if let Ok(children) = children_query.get(entity) {
+            all_children(children, &children_query, &mut |entity| {
+                if has_needle_component.get(entity).is_ok() {
+                    commands.entity(entity).insert(T::default());
+                    found = true;
+                }
+            });
+        }
+        if found {
+            // Seems like this is removed prematurely without found check
+            commands.entity(entity).remove::<PropagateDefault<T>>();
+        }
+    }
+}
+
+#[derive(Component)]
 /// Propagate T to all children with Name containing str, don't forget to add the generic system! propagate_to_name::<T>
 pub struct PropagateToName<T: Component + Clone>(pub T, pub Cow<'static, str>);
 
