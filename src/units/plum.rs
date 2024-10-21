@@ -4,7 +4,7 @@ use std::{
 };
 
 use crate::{
-    animation::{init_animation_graph, AnimClips, AnimationIndices},
+    animation::{init_animation_graph, AnimClips, AnimPlayerController, AnimationIndices},
     mesh_assets::MeshAssets,
     util::{pfract, propagate, Propagate, FRAC_1_TAU},
     GameLoading,
@@ -31,8 +31,29 @@ impl Plugin for PlumUnitPlugin {
     }
 }
 
-#[derive(Component, Clone)]
-pub struct PlumUnit;
+#[derive(Component, Clone, Debug)]
+pub struct PlumUnit {
+    pub action: PlumAction,
+    pub health: f32,
+}
+
+impl Default for PlumUnit {
+    fn default() -> Self {
+        Self {
+            action: Default::default(),
+            health: 100.0,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub enum PlumAction {
+    #[default]
+    Idle,
+    Attack,
+    Rotate,
+    Walk,
+}
 
 #[derive(Component, Clone)]
 pub struct PlumUnitAnim {
@@ -68,7 +89,7 @@ fn ui_example_system(
                     transform: Transform::from_xyz(0.0, 0.0, -100.0),
                     ..default()
                 },
-                PlumUnit,
+                PlumUnit::default(),
             ));
             ecmds.insert(Propagate(PlumUnitAnim {
                 main_entity: ecmds.id(),
@@ -119,7 +140,7 @@ fn put_self_on_parent(
 }
 
 fn move_to_player(
-    mut units: Query<(&mut Transform, &PlumUnitAnimChildRef), With<PlumUnit>>,
+    mut units: Query<(&mut Transform, &PlumUnitAnimChildRef, &mut PlumUnit)>,
     player: Query<&Transform, (With<Camera3d>, Without<PlumUnit>)>,
     time: Res<Time>,
     mut plum_anim: Query<(
@@ -135,12 +156,13 @@ fn move_to_player(
     let dt = time.delta_seconds();
 
     let dest = player.translation;
-    let attack_dist = 13.0;
+    let attack_dist = 15.0;
 
-    for (mut unit_trans, anim_child) in &mut units {
-        if let Ok((mut transitions, anim, _plum_unit, mut anim_player)) =
-            plum_anim.get_mut(anim_child.0)
+    for (mut unit_trans, anim_child, mut unit) in &mut units {
+        if let Ok((mut transitions, anim, _plum_unit, mut player)) = plum_anim.get_mut(anim_child.0)
         {
+            let mut player = AnimPlayerController::new(&mut transitions, &mut player, anim);
+
             let forward = *unit_trans.forward();
             let mut to_dest =
                 (dest - unit_trans.translation).normalize_or(unit_trans.translation + forward);
@@ -149,74 +171,48 @@ fn move_to_player(
 
             let to_dist = (dest - unit_trans.translation).length();
 
-            let buffer = 1.0;
-            let should_attack = to_dist - buffer < attack_dist;
-
-            let attacking = anim_player.is_playing_animation(anim["Attack"]);
-
             let to_dest_dir = (to_dest.x.atan2(to_dest.z) + PI) * FRAC_1_TAU;
             let forward_dir = (forward.x.atan2(forward.z) + PI) * FRAC_1_TAU;
             let need_to_rotate_dir = pfract(forward_dir - to_dest_dir) - 0.5;
             let dir_anim_index = if need_to_rotate_dir > 0.0 {
-                anim["Fast_Turning_Left"]
+                "Fast_Turning_Left"
             } else {
-                anim["Fast_Turning_Right"]
+                "Fast_Turning_Right"
             };
 
             let need_to_turn = to_dest.dot(*unit_trans.forward()) < 0.93;
 
-            if should_attack && !attacking && !need_to_turn {
-                dbg!("ATTACK");
-                transitions
-                    .play(
-                        &mut anim_player,
-                        anim["Attack"],
-                        Duration::from_secs_f32(0.1),
-                    )
-                    .set_speed(1.0);
-            } else {
-                if !attacking && need_to_turn && !anim_player.is_playing_animation(dir_anim_index) {
-                    transitions
-                        .play(
-                            &mut anim_player,
-                            dir_anim_index,
-                            Duration::from_secs_f32(0.1),
-                        )
-                        .repeat()
-                        .set_speed(1.0);
-                    dbg!("SET");
-                }
-                if !attacking
-                    && !need_to_turn
-                    && to_dist > attack_dist
-                    && !anim_player.is_playing_animation(anim["Fast_Walk_Cycle"])
-                {
-                    transitions
-                        .play(
-                            &mut anim_player,
-                            anim["Fast_Walk_Cycle"],
-                            Duration::from_secs_f32(0.1),
-                        )
-                        .repeat()
-                        .set_speed(1.0);
-                }
+            let buffer = 2.0;
+            let should_attack = to_dist - buffer < attack_dist;
+            let should_pursue = !need_to_turn && to_dist > attack_dist;
+
+            let attacking = player.playing("Attack");
+
+            if !attacking && should_attack {
+                player.play("Attack", 0.1, 1.0, false);
+            } else if !attacking && !player.playing(dir_anim_index) && need_to_turn {
+                player.play(dir_anim_index, 0.1, 1.0, true);
+            } else if !attacking && !player.playing("Fast_Walk_Cycle") && should_pursue {
+                player.play("Fast_Walk_Cycle", 0.1, 1.0, true);
             }
 
-            if anim_player.is_playing_animation(anim["Attack"]) {
-                let active_anim = anim_player.animation(anim["Attack"]).unwrap();
+            if player.playing("Attack") {
+                unit.action = PlumAction::Attack;
+
+                let active_anim = player.animation("Attack").unwrap();
                 let anim_speed = active_anim.speed();
                 let dest_rot =
                     unit_trans.looking_at(vec3(dest.x, unit_trans.translation.y, dest.z), Vec3::Y);
                 unit_trans.rotation = unit_trans
                     .rotation
                     .lerp(dest_rot.rotation, (0.15 * anim_speed).clamp(0.0, 1.0));
-            }
+            } else if player.playing("Fast_Walk_Cycle") {
+                unit.action = PlumAction::Walk;
 
-            if anim_player.is_playing_animation(anim["Fast_Walk_Cycle"]) {
                 let base_walk_speed = 14.0;
 
-                let active_anim = anim_player.animation(anim["Fast_Walk_Cycle"]).unwrap();
-                let seek_f = active_anim.seek_time() * 24.0 + 10.0;
+                let active_anim = player.animation("Fast_Walk_Cycle").unwrap();
+                let seek_f = active_anim.seek_time() * 24.0 + 10.0; // TODO what offset by 10?
 
                 let current_y = unit_trans.translation.y;
                 let move_start = 20.0;
@@ -233,11 +229,12 @@ fn move_to_player(
                         .rotation
                         .lerp(dest_rot.rotation, (0.15 * anim_speed).clamp(0.0, 1.0));
                 }
-            }
-            if anim_player.is_playing_animation(dir_anim_index) {
+            } else if player.playing(dir_anim_index) {
+                unit.action = PlumAction::Rotate;
+
                 let base_turn_speed = 1.0 * need_to_rotate_dir.signum();
 
-                let active_anim = anim_player.animation(dir_anim_index).unwrap();
+                let active_anim = player.animation(dir_anim_index).unwrap();
                 let seek_f = active_anim.seek_time() * 24.0 + 0.0;
 
                 let move_start = 16.0;

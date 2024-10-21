@@ -1,4 +1,6 @@
-use bevy::{prelude::*, utils::hashbrown::HashMap};
+use std::time::Duration;
+
+use bevy::{animation::ActiveAnimation, prelude::*, utils::hashbrown::HashMap};
 
 use crate::mesh_assets::MeshAssets;
 
@@ -35,5 +37,59 @@ pub fn init_animation_graph<T: AnimClips + Component>(
         commands
             .entity(entity)
             .insert((transitions, graph_handle, AnimationIndices(anim_indices)));
+    }
+}
+
+/// Wraps the relevant animation components into a simpler interface
+pub struct AnimPlayerController<'a> {
+    pub transitions: &'a mut AnimationTransitions,
+    pub player: &'a mut AnimationPlayer,
+    pub anim: &'a AnimationIndices,
+}
+
+impl<'a> AnimPlayerController<'a> {
+    pub fn new(
+        transitions: &'a mut AnimationTransitions,
+        player: &'a mut AnimationPlayer,
+        anim: &'a AnimationIndices,
+    ) -> Self {
+        AnimPlayerController {
+            transitions,
+            player,
+            anim,
+        }
+    }
+
+    pub fn play(&mut self, name: &str, transition: f32, speed: f32, repeat: bool) {
+        self.play_idx(self.anim[name], transition, speed, repeat)
+    }
+
+    pub fn play_idx(&mut self, idx: AnimationNodeIndex, transition: f32, speed: f32, repeat: bool) {
+        let a = self
+            .transitions
+            .play(self.player, idx, Duration::from_secs_f32(transition))
+            .set_speed(speed);
+        if repeat {
+            a.repeat();
+        }
+    }
+
+    pub fn playing(&mut self, name: &str) -> bool {
+        self.player.is_playing_animation(self.anim[name])
+    }
+
+    pub fn playing_idx(&mut self, idx: AnimationNodeIndex) -> bool {
+        self.player.is_playing_animation(idx)
+    }
+
+    pub fn animation(&mut self, name: &str) -> std::option::Option<ActiveAnimation> {
+        self.player.animation(self.anim[name]).copied()
+    }
+
+    pub fn animation_idx(
+        &mut self,
+        idx: AnimationNodeIndex,
+    ) -> std::option::Option<ActiveAnimation> {
+        self.player.animation(idx).copied()
     }
 }
