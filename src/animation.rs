@@ -61,7 +61,15 @@ impl<'a> AnimPlayerController<'a> {
     }
 
     pub fn play(&mut self, name: &str, transition: f32, speed: f32, repeat: bool) {
-        self.play_idx(self.anim[name], transition, speed, repeat)
+        self.play_idx(
+            *self
+                .anim
+                .get(name)
+                .unwrap_or_else(|| panic!("{}", self.no_name_msg(name))),
+            transition,
+            speed,
+            repeat,
+        )
     }
 
     pub fn play_idx(&mut self, idx: AnimationNodeIndex, transition: f32, speed: f32, repeat: bool) {
@@ -75,7 +83,20 @@ impl<'a> AnimPlayerController<'a> {
     }
 
     pub fn playing(&mut self, name: &str) -> bool {
-        self.player.is_playing_animation(self.anim[name])
+        self.player.is_playing_animation(
+            *self
+                .anim
+                .get(name)
+                .unwrap_or_else(|| panic!("{}", self.no_name_msg(name))),
+        )
+    }
+
+    fn no_name_msg(&self, name: &str) -> String {
+        format!(
+            "Couldn't find animation with name: {}. Options: {:?}",
+            name,
+            self.anim.iter().map(|(_, v)| v)
+        )
     }
 
     pub fn playing_idx(&mut self, idx: AnimationNodeIndex) -> bool {
@@ -83,7 +104,14 @@ impl<'a> AnimPlayerController<'a> {
     }
 
     pub fn animation(&mut self, name: &str) -> std::option::Option<ActiveAnimation> {
-        self.player.animation(self.anim[name]).copied()
+        self.player
+            .animation(
+                *self
+                    .anim
+                    .get(name)
+                    .unwrap_or_else(|| panic!("{}", self.no_name_msg(name))),
+            )
+            .copied()
     }
 
     pub fn animation_idx(
@@ -92,4 +120,11 @@ impl<'a> AnimPlayerController<'a> {
     ) -> std::option::Option<ActiveAnimation> {
         self.player.animation(idx).copied()
     }
+}
+
+pub fn ramp_up_down_anim(seek_f: f32, move_start: f32, move_length: f32, pow_curve: f32) -> f32 {
+    let mut mspeed = (seek_f - move_start) / move_length;
+    mspeed = 1.0 - (mspeed * 2.0 - 1.0).abs();
+    mspeed = mspeed.powf(pow_curve);
+    mspeed
 }
