@@ -1,6 +1,7 @@
 use std::borrow::Cow;
 
 use bevy::prelude::*;
+pub const FRAC_1_TAU: f32 = 0.15915494309;
 
 pub fn all_children<F: FnMut(Entity)>(
     children: &Children,
@@ -68,5 +69,16 @@ pub fn propagate_to_name<T: Component + Clone>(
                 commands.entity(entity).remove::<PropagateToName<T>>();
             }
         }
+    }
+}
+
+// like .rem_euclid(1.0)
+#[inline(always)]
+pub fn pfract(x: f32) -> f32 {
+    let y = x.fract();
+    if y < 0.0 {
+        y + 1.0
+    } else {
+        y
     }
 }
