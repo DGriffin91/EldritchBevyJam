@@ -22,4 +22,6 @@ pub struct MeshAssets {
 
     #[asset(path = "temp/level_c.gltf#Scene0")]
     pub level_c: Handle<Scene>,
+    #[asset(path = "temp/level_c_test.gltf#Scene0")]
+    pub level_c_test: Handle<Scene>,
 }

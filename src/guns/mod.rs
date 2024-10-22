@@ -6,10 +6,10 @@ use std::{
 use bevy::{math::*, prelude::*};
 use bevy_asset_loader::asset_collection::AssetCollection;
 use bevy_egui::EguiContexts;
-use bevy_fps_controller::controller::RenderPlayer;
 
 use crate::{
     character_controller::manage_cursor,
+    fps_controller::RenderPlayer,
     util::{propagate_to_name, PropagateToName},
     GameLoading,
 };

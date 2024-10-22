@@ -207,11 +207,12 @@ fn move_to_player(
             if player.playing("Attack") {
                 unit.action = SpiderAction::Attack;
 
-                let active_anim = player.animation("Attack").unwrap();
-                let anim_speed = active_anim.speed();
+                //let active_anim = player.animation("Attack").unwrap();
+                //let anim_speed = active_anim.speed();
 
-                let dest_rot =
-                    unit_trans.looking_at(vec3(dest.x, unit_trans.translation.y, dest.z), Vec3::Y);
+                //let dest_rot =
+                //    unit_trans.looking_at(vec3(dest.x, unit_trans.translation.y, dest.z), Vec3::Y);
+
                 //unit_trans.rotation = unit_trans
                 //    .rotation
                 //    .lerp(dest_rot.rotation, (0.1 * anim_speed).clamp(0.0, 1.0));

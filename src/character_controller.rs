@@ -3,10 +3,6 @@ use bevy::math::vec2;
 use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
 use bevy_egui::EguiContexts;
-use bevy_fps_controller::controller::{
-    CameraConfig, FpsController, FpsControllerInput, FpsControllerPlugin, LogicalPlayer,
-    RenderPlayer,
-};
 use bevy_rapier3d::prelude::*;
 use bs13::bs13_render::cmaa::Cmaa;
 use bs13::bs13_render::ssao::Ssao;
@@ -15,9 +11,14 @@ use bs13::bs13_render::GpuCull;
 use bs13_render::frame_pyramid::FramePyramid;
 use bs13_render::ssr::Ssr;
 use bs13_render::DepthPrepassForDeferred;
+use fps_controller::{
+    CameraConfig, FpsController, FpsControllerInput, FpsControllerPlugin, LogicalPlayer,
+    RenderPlayer,
+};
 use std::f32::consts::TAU;
 
 use crate::audio::spatial::GameAudioReceiver;
+use crate::fps_controller;
 
 pub struct CharacterController;
 impl Plugin for CharacterController {

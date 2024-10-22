@@ -29,6 +29,7 @@ use character_controller::CharacterController;
 use eldritch_game::audio::spatial::{AudioEmitter, AudioEmitterSet};
 use eldritch_game::guns::{GunSceneAssets, GunsPlugin};
 use eldritch_game::mesh_assets::MeshAssets;
+use eldritch_game::physics::{AddCuboidColliders, AddCuboidSensors};
 use eldritch_game::units::UnitsPlugin;
 use eldritch_game::util::PropagateToName;
 use eldritch_game::{audio, character_controller, minimal_kira_audio, physics, GameLoading};
@@ -149,12 +150,22 @@ fn level_c(mut commands: Commands, mesh_assets: Res<MeshAssets>) {
             scene: mesh_assets.level_c.clone(),
             ..default()
         })
-        .insert(PropagateToName(
-            AddTrimeshPhysics,
-            Cow::Borrowed("COLLIDER"),
+        .insert((
+            PropagateToName(AddTrimeshPhysics, Cow::Borrowed("COLLIDER")),
+            PropagateToName(AddCuboidColliders, Cow::Borrowed("COLLIDER")),
+            PropagateToName(AddCuboidSensors, Cow::Borrowed("SENSOR")),
+        ));
+    commands
+        .spawn(SceneBundle {
+            scene: mesh_assets.level_c_test.clone(),
+            ..default()
+        })
+        .insert((
+            PropagateToName(AddTrimeshPhysics, Cow::Borrowed("COLLIDER")),
+            PropagateToName(AddCuboidColliders, Cow::Borrowed("COLLIDER")),
+            PropagateToName(AddCuboidSensors, Cow::Borrowed("SENSOR")),
         ));
 }
-
 #[derive(Resource)]
 pub struct CookingTrack {
     pub handle: Handle<KiraTrackHandle>,

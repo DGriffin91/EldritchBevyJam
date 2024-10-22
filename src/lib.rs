@@ -3,6 +3,7 @@ use bevy::prelude::*;
 pub mod animation;
 pub mod audio;
 pub mod character_controller;
+pub mod fps_controller;
 pub mod guns;
 pub mod mesh_assets;
 pub mod minimal_kira_audio;
