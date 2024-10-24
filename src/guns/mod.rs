@@ -3,13 +3,15 @@ use std::{
     f32::consts::{PI, TAU},
 };
 
-use bevy::{math::*, prelude::*};
+use bevy::{math::*, prelude::*, render::primitives::Aabb};
 use bevy_asset_loader::asset_collection::AssetCollection;
 use bevy_egui::EguiContexts;
+use bounding::{BoundingSphere, IntersectsVolume};
 
 use crate::{
     character_controller::manage_cursor,
     fps_controller::RenderPlayer,
+    units::spider::SpiderUnit,
     util::{propagate_to_name, PropagateToName},
     GameLoading,
 };
@@ -156,6 +158,7 @@ pub fn fire_gun(
     mut fire_ready: Local<bool>,
     gun_assets: Res<GunSceneAssets>,
     mut vis_started: Local<f32>,
+    mut units: Query<(&GlobalTransform, &mut SpiderUnit)>,
 ) {
     if contexts.ctx_mut().wants_pointer_input() {
         return;
@@ -251,6 +254,28 @@ pub fn fire_gun(
                     .into(),
             },
         ));
+
+        // TODO use player cam
+        let ray = obvhs::ray::Ray::new_inf(
+            gun_global_trans.translation().into(),
+            (*gun_global_trans.forward()).into(),
+        );
+        for (unit_trans, mut unit) in &mut units {
+            let matrix = unit_trans.affine();
+            // TODO put as component
+            //let aabb = obvhs::aabb::Aabb {
+            //    min: matrix.transform_point3a(aabb.min()),
+            //    max: matrix.transform_point3a(aabb.max()),
+            //};
+            let aabb = obvhs::aabb::Aabb {
+                min: unit_trans.translation_vec3a() - 1.0,
+                max: unit_trans.translation_vec3a() + 1.0,
+            };
+            if aabb.intersect_ray(&ray) != f32::INFINITY {
+                dbg!("HIT");
+                unit.health -= 10.0;
+            }
+        }
     }
 }
 

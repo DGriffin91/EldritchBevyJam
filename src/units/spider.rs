@@ -23,7 +23,9 @@ impl Plugin for SpiderUnitPlugin {
                 init_animation_graph::<SpiderUnitAnim>,
                 ui_example_system,
                 put_self_on_parent,
+                spider_spawner,
                 move_to_player,
+                despawn_dead_spider,
             )
                 .chain()
                 .run_if(in_state(GameLoading::Loaded)),
@@ -69,6 +71,39 @@ pub struct SpiderUnitAnimChildRef(pub Entity);
 impl AnimClips for SpiderUnitAnim {
     fn get_gltf_id(&self, mesh_assets: &MeshAssets) -> Handle<Gltf> {
         mesh_assets.spider_gltf.clone_weak()
+    }
+}
+
+fn spider_spawner(
+    mut commands: Commands,
+    player: Query<&Transform, (With<Camera3d>, Without<SpiderUnit>)>,
+    time: Res<Time>,
+    mut last_spawn: Local<f32>,
+    mesh_assets: Res<MeshAssets>,
+) {
+    let Ok(player) = player.get_single() else {
+        return;
+    };
+    let t = time.elapsed_seconds();
+
+    if player.translation.y < -200.0 && t > *last_spawn + 5.0 {
+        *last_spawn = t;
+        dbg!("SPAWN");
+        let mut ecmds = commands.spawn((
+            SceneBundle {
+                scene: mesh_assets.spider.clone(),
+                transform: Transform::from_xyz(0.0, -220.0, -700.0)
+                    .with_scale(Vec3::splat(SPIDER_SCALE)),
+                ..default()
+            },
+            SpiderUnit::default(),
+            NoFrustumCulling,
+            PropagateDefault(NoFrustumCulling),
+        ));
+        ecmds.insert(Propagate(SpiderUnitAnim {
+            main_entity: ecmds.id(),
+            added_ref_to_self_on_parent: false,
+        }));
     }
 }
 
@@ -243,6 +278,17 @@ fn move_to_player(
                 //SPIDER_SCALE * // Small things don't turn slower
                 unit_trans.rotate_local_y(dt * base_turn_speed * turn_sign * anim_speed * TAU);
             }
+        }
+    }
+}
+
+fn despawn_dead_spider(
+    mut commands: Commands,
+    mut units: Query<(Entity, &mut Transform, &mut SpiderUnit)>,
+) {
+    for (entity, trans, unit) in &units {
+        if unit.health < 0.0 {
+            commands.entity(entity).despawn_recursive();
         }
     }
 }

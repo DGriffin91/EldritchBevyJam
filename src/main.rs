@@ -18,7 +18,7 @@ use bevy::window::{PresentMode, WindowResolution};
 use bevy::winit::{UpdateMode, WinitSettings};
 use bevy_asset_loader::loading_state::config::ConfigureLoadingState;
 use bevy_asset_loader::loading_state::{LoadingState, LoadingStateAppExt};
-use bevy_mod_mipmap_generator::{generate_mipmaps, MipmapGeneratorPlugin, MipmapGeneratorSettings};
+// use bevy_mod_mipmap_generator::{generate_mipmaps, MipmapGeneratorPlugin, MipmapGeneratorSettings};
 
 use bs13::bs13_render::dyn_material_blender::AllDynMaterialImagesMaterial;
 
@@ -45,16 +45,17 @@ use physics::{AddTrimeshPhysics, PhysicsStuff};
 fn main() {
     let mut app = App::new();
     app.insert_resource(Msaa::Off)
-        .insert_resource(ClearColor(Color::srgb(0.1, 0.03, 0.03)))
+        //.insert_resource(ClearColor(Color::srgb(0.1, 0.03, 0.03)))
+        .insert_resource(ClearColor(Color::BLACK))
         .insert_resource(AmbientLight::NONE)
         // TODO include compressed textures?
-        .insert_resource(MipmapGeneratorSettings {
-            anisotropic_filtering: 16,
-            compression: Some(Default::default()),
-            compressed_image_data_cache_path: Some(PathBuf::from("cache")),
-            low_quality: true,
-            ..default()
-        })
+        //.insert_resource(MipmapGeneratorSettings {
+        //    anisotropic_filtering: 16,
+        //    compression: Some(Default::default()),
+        //    compressed_image_data_cache_path: Some(PathBuf::from("cache")),
+        //    low_quality: true,
+        //    ..default()
+        //})
         .insert_resource(WinitSettings {
             focused_mode: UpdateMode::Continuous,
             unfocused_mode: UpdateMode::Continuous,
@@ -83,7 +84,7 @@ fn main() {
             BS13StandardMaterialPluginsSet,
             LogDiagnosticsPlugin::default(),
             FrameTimeDiagnosticsPlugin,
-            MipmapGeneratorPlugin,
+            //MipmapGeneratorPlugin,
             BS13EguiPlugin,
             BS13TaaPlugin,
             PhysicsStuff,
@@ -104,7 +105,7 @@ fn main() {
 
     app.add_systems(Startup, setup)
         .add_systems(OnEnter(GameLoading::Loaded), level_c)
-        .add_systems(Update, generate_mipmaps::<AllDynMaterialImagesMaterial>)
+        //.add_systems(Update, generate_mipmaps::<AllDynMaterialImagesMaterial>)
         .run();
 }
 
