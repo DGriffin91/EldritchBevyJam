@@ -40,7 +40,7 @@ impl Plugin for SpiderUnitPlugin {
 
 const SPIDER_SCALE: f32 = 0.5;
 const SPIDER_ATTACK_DMG: f32 = 4.0; // Per dt
-const MAX_SPIDER_COUNT: usize = 1000;
+const MAX_SPIDER_COUNT: usize = 100;
 
 #[derive(Component, Clone, Debug)]
 pub struct SpiderUnit {
@@ -215,7 +215,7 @@ fn move_to_player(
 
     let dest = player_trans.translation;
     let attack_dist = 3.0;
-    let base_walk_speed = 10.0;
+    let base_walk_speed = 12.0;
     let base_turn_speed = 3.0;
 
     for (mut unit_trans, anim_child, mut unit) in &mut units {

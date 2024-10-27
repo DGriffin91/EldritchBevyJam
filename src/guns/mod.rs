@@ -414,12 +414,7 @@ fn shadercomp_gun_misc(
     assets: Res<GunSceneAssets>,
     mesh_assets: Res<MeshAssets>,
 ) {
-    for scene in [
-        assets.lmg_bullet.clone(),
-        assets.lmg_bullet_jacket.clone(),
-        mesh_assets.blood.clone(),
-        mesh_assets.exp.clone(),
-    ] {
+    for scene in [assets.lmg_bullet.clone(), assets.lmg_bullet_jacket.clone()] {
         commands.spawn((
             SceneBundle {
                 scene,
@@ -429,6 +424,17 @@ fn shadercomp_gun_misc(
             NoFrustumCulling,
             PropagateDefault(NoFrustumCulling),
             ShaderCompSpawn,
+        ));
+    }
+    for scene in [mesh_assets.blood.clone(), mesh_assets.exp.clone()] {
+        commands.spawn((
+            SceneBundle {
+                scene,
+                transform: Transform::from_xyz(0.0, -5200.0, 0.0),
+                ..default()
+            },
+            NoFrustumCulling,
+            PropagateDefault(NoFrustumCulling),
         ));
     }
 }
