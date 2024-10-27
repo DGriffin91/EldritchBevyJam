@@ -283,11 +283,8 @@ fn move_to_player(
     }
 }
 
-fn despawn_dead_spider(
-    mut commands: Commands,
-    mut units: Query<(Entity, &mut Transform, &mut SpiderUnit)>,
-) {
-    for (entity, trans, unit) in &units {
+fn despawn_dead_spider(mut commands: Commands, units: Query<(Entity, &Transform, &SpiderUnit)>) {
+    for (entity, _trans, unit) in &units {
         if unit.health < 0.0 {
             commands.entity(entity).despawn_recursive();
         }

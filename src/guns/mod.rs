@@ -3,14 +3,14 @@ use std::{
     f32::consts::{PI, TAU},
 };
 
-use bevy::{math::*, prelude::*, render::primitives::Aabb};
+use bevy::{core::FrameCount, math::*, prelude::*};
 use bevy_asset_loader::asset_collection::AssetCollection;
 use bevy_egui::EguiContexts;
-use bounding::{BoundingSphere, IntersectsVolume};
 
 use crate::{
     character_controller::manage_cursor,
     fps_controller::RenderPlayer,
+    hash_noise,
     units::spider::SpiderUnit,
     util::{propagate_to_name, PropagateToName},
     GameLoading,
@@ -41,8 +41,10 @@ impl Plugin for GunsPlugin {
     }
 }
 
-#[derive(Component)]
-pub struct GunLMG;
+#[derive(Component, Default)]
+pub struct GunLMG {
+    offset: Vec3,
+}
 
 #[derive(Component)]
 pub struct LMGMuzzleFlashLight;
@@ -80,7 +82,7 @@ fn spawn_gun(mut commands: Commands, gun_assets: Res<GunSceneAssets>) {
                 transform: Transform::from_xyz(0.0, 0.0, 0.0),
                 ..default()
             },
-            GunLMG,
+            GunLMG::default(),
             PropagateToName(LMGMuzzleFlashMesh, Cow::Borrowed("MUZZLE_FLASH")),
         ))
         .with_children(|cmd| {
@@ -106,20 +108,24 @@ fn spawn_gun(mut commands: Commands, gun_assets: Res<GunSceneAssets>) {
 }
 
 fn position_lmg(
-    mut gun: Query<&mut Transform, With<GunLMG>>,
+    mut gun: Query<(&mut Transform, &mut GunLMG)>,
     player_camera: Query<&Transform, (With<RenderPlayer>, Without<GunLMG>)>,
+    time: Res<Time>,
 ) {
-    let Ok(mut gun_trans) = gun.get_single_mut() else {
+    let Ok((mut gun_trans, mut gun)) = gun.get_single_mut() else {
         return;
     };
     let Ok(player_cam_trans) = player_camera.get_single() else {
         return;
     };
     let player_mat = player_cam_trans.compute_matrix();
-
+    gun.offset = gun
+        .offset
+        .lerp(Vec3::ZERO, (time.delta_seconds() * 10.0).clamp(0.0, 1.0));
     gun_trans.rotation = player_cam_trans.rotation;
+
     gun_trans.translation = player_mat
-        .transform_point3a(Vec3A::new(0.4, -0.2, -1.6))
+        .transform_point3a(Vec3A::new(0.4, -0.2, -1.6) + Vec3A::from(gun.offset))
         .into();
 }
 
@@ -137,9 +143,8 @@ pub fn fire_gun(
         ),
     >,
     mut gun: Query<
-        &GlobalTransform,
+        (&mut GunLMG, &GlobalTransform),
         (
-            With<GunLMG>,
             Without<LMGRotateyBoi>,
             Without<LMGMuzzleFlashLight>,
             Without<LMGMuzzleFlashMesh>,
@@ -159,23 +164,38 @@ pub fn fire_gun(
     gun_assets: Res<GunSceneAssets>,
     mut vis_started: Local<f32>,
     mut units: Query<(&GlobalTransform, &mut SpiderUnit)>,
+    player_camera: Query<
+        &Transform,
+        (
+            With<RenderPlayer>,
+            Without<LMGMuzzleFlashMesh>,
+            Without<LMGRotateyBoi>,
+            Without<LMGMuzzleFlashLight>,
+            Without<GunLMG>,
+        ),
+    >,
+    frame: Res<FrameCount>,
 ) {
     if contexts.ctx_mut().wants_pointer_input() {
         return;
     }
+    let Ok(player_cam_trans) = player_camera.get_single() else {
+        return;
+    };
     let Ok((mut gun_rot_trans, mut props)) = gun_rot.get_single_mut() else {
         return;
     };
     let Ok((mut gun_muzzle_light, mut _muzzle_props)) = gun_muzzle.get_single_mut() else {
         return;
     };
-    let Ok(gun_global_trans) = gun.get_single_mut() else {
+    let Ok((mut gun, gun_global_trans)) = gun.get_single_mut() else {
         return;
     };
     let Ok(mut muzzle_flash_mesh_vis) = muzzle_flash_mesh.get_single_mut() else {
         return;
     };
 
+    let frame = frame.0;
     let t = time.elapsed_seconds();
     let dt = time.delta_seconds();
     let max_rotate_speed = 12.0;
@@ -230,13 +250,21 @@ pub fn fire_gun(
 
     if fire_this_frame {
         let gun_global_mat = gun_global_trans.compute_matrix();
+        let rng_vel = 2.0;
+
+        let offset_strength = 1.0 - props.rotate_speed.clamp(0.0, 1.0);
+        gun.offset += vec3(
+            (hash_noise(frame, 0, 0) * 2.0 - 1.0) * 0.01,
+            (hash_noise(frame, 1, 0) * 2.0 - 1.0) * 0.01,
+            (hash_noise(frame, 1, 0) * 2.0 - 1.0) * 0.01 + 0.2,
+        ) * (offset_strength * 0.9 + 0.1);
 
         commands.spawn((
             SceneBundle {
                 scene: gun_assets.lmg_bullet_jacket.clone(),
                 transform: Transform::from_translation(
                     gun_global_mat
-                        .transform_point3a(Vec3A::new(0.8, 0.2, -1.2))
+                        .transform_point3a(Vec3A::new(0.8, 0.2, -1.2) + Vec3A::from(gun.offset))
                         .into(),
                 )
                 .looking_at(
@@ -250,8 +278,13 @@ pub fn fire_gun(
             },
             LMGBullet {
                 velocity: gun_global_mat
-                    .transform_vector3a(Vec3A::new(3.0, 6.0, 1.0))
+                    .transform_vector3a(Vec3A::new(
+                        2.0 + hash_noise(frame, 0, 0) * rng_vel,
+                        5.0 + hash_noise(frame, 1, 0) * rng_vel,
+                        0.6 + hash_noise(frame, 2, 0) * rng_vel,
+                    ))
                     .into(),
+                floor_y: player_cam_trans.translation.y - 2.5,
             },
         ));
 
@@ -261,7 +294,7 @@ pub fn fire_gun(
             (*gun_global_trans.forward()).into(),
         );
         for (unit_trans, mut unit) in &mut units {
-            let matrix = unit_trans.affine();
+            //let matrix = unit_trans.affine();
             // TODO put as component
             //let aabb = obvhs::aabb::Aabb {
             //    min: matrix.transform_point3a(aabb.min()),
@@ -273,7 +306,7 @@ pub fn fire_gun(
             };
             if aabb.intersect_ray(&ray) != f32::INFINITY {
                 dbg!("HIT");
-                unit.health -= 10.0;
+                unit.health -= 30.0;
             }
         }
     }
@@ -282,7 +315,9 @@ pub fn fire_gun(
 #[derive(Component)]
 pub struct LMGBullet {
     velocity: Vec3,
+    floor_y: f32,
 }
+
 pub fn update_bullet(
     //mut commands: Commands,
     mut bullets: Query<(Entity, &mut LMGBullet, &mut Transform)>,
@@ -290,7 +325,7 @@ pub fn update_bullet(
 ) {
     let dt = time.delta_seconds();
     for (_entity, mut bullet, mut trans) in &mut bullets {
-        if trans.translation.y < 0.1 {
+        if trans.translation.y < bullet.floor_y + 0.1 {
             bullet.velocity.y = 0.0;
             bullet.velocity.x *= 0.993;
             bullet.velocity.z *= 0.993;
