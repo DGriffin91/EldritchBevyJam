@@ -26,4 +26,10 @@ pub struct MeshAssets {
     pub level_c: Handle<Scene>,
     #[asset(path = "temp/starting_level.gltf#Scene0")]
     pub starting_level: Handle<Scene>,
+
+    #[asset(path = "models/blood.gltf#Scene0")]
+    pub blood: Handle<Scene>,
+
+    #[asset(path = "models/exp.gltf#Scene0")]
+    pub exp: Handle<Scene>,
 }

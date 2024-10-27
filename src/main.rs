@@ -34,7 +34,8 @@ use eldritch_game::physics::{AddCuboidColliders, AddCuboidSensors};
 use eldritch_game::units::UnitsPlugin;
 use eldritch_game::util::{propagate_to_name, PropagateToName};
 use eldritch_game::{
-    audio, character_controller, minimal_kira_audio, physics, GameLoading, LEVEL_TRANSITION_HEIGHT,
+    audio, character_controller, minimal_kira_audio, physics, GameLoading, ShaderCompSpawn,
+    LEVEL_TRANSITION_HEIGHT,
 };
 use iyes_progress::ProgressPlugin;
 use kira::effect::reverb::ReverbBuilder;
@@ -115,6 +116,7 @@ fn main() {
                 hide_start_level,
                 crosshair,
                 move_player_to_start,
+                shadercomp_despawn,
             )
                 .run_if(in_state(GameLoading::Loaded)),
         )
@@ -162,13 +164,13 @@ fn level_c(mut commands: Commands, mesh_assets: Res<MeshAssets>) {
         scene: mesh_assets.level_c.clone(),
         ..default()
     },)));
-    add_level_props(commands.spawn((
-        StartLevel,
-        SceneBundle {
-            scene: mesh_assets.starting_level.clone(),
-            ..default()
-        },
-    )));
+    //add_level_props(commands.spawn((
+    //    StartLevel,
+    //    SceneBundle {
+    //        scene: mesh_assets.starting_level.clone(),
+    //        ..default()
+    //    },
+    //)));
     add_level_props(commands.spawn((
         StartLevel,
         SceneBundle {
@@ -314,4 +316,23 @@ fn crosshair(mut contexts: EguiContexts) {
         egui::Rounding::ZERO,
         egui::Color32::WHITE,
     );
+}
+
+fn shadercomp_despawn(
+    mut commands: Commands,
+    entities: Query<Entity, With<ShaderCompSpawn>>,
+    mut frames_in: Local<u32>,
+    mut has_run: Local<bool>,
+) {
+    if *has_run {
+        return;
+    }
+    *frames_in += 1;
+
+    if *frames_in > 100 {
+        for entity in &entities {
+            commands.entity(entity).despawn_recursive();
+        }
+        *has_run = true;
+    }
 }

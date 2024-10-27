@@ -42,3 +42,6 @@ pub fn hash_noise(x: u32, y: u32, z: u32) -> f32 {
     let urnd = uhash(x, (y << 11) + z);
     unormf(urnd)
 }
+
+#[derive(Component, Clone, Copy)]
+pub struct ShaderCompSpawn;

@@ -29,7 +29,7 @@ impl Plugin for CharacterController {
     }
 }
 
-const SPAWN_POINT: Vec3 = Vec3::new(0.0, 1.625, 0.0);
+const SPAWN_POINT: Vec3 = Vec3::new(0.0, 1.625, -100.0);
 
 fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
     // Note that we have two entities for the player
@@ -37,14 +37,14 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
     // The other is a "render" player that is what is displayed to the user
     // This distinction is useful for later on if you want to add multiplayer,
     // where often time these two ideas are not exactly synced up
-    let height = 3.0;
+    let height = 1.7;
     let logical_entity = commands
         .spawn((
-            //Collider::cylinder(height / 2.0, 0.5),
+            Collider::cylinder(height / 2.0, 0.5),
             // A capsule can be used but is NOT recommended
             // If you use it, you have to make sure each segment point is
             // equidistant from the translation of the player transform
-            Collider::capsule_y(height / 2.0, 0.5),
+            //Collider::capsule_y(height / 2.0, 0.5),
             Friction {
                 coefficient: 0.0,
                 combine_rule: CoefficientCombineRule::Min,
@@ -74,12 +74,14 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
                 jump_speed: 15.0,
                 run_speed: 50.0,
                 walk_speed: 10.0,
+                upright_height: height,
+                crouch_height: height * 0.5,
                 //gravity: 0.0,
                 ..default()
             },
         ))
         .insert(CameraConfig {
-            height_offset: -0.5,
+            height_offset: -0.1,
         })
         .id();
 

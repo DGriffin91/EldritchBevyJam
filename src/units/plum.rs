@@ -9,7 +9,7 @@ use crate::{
     },
     mesh_assets::MeshAssets,
     util::{pfract, propagate, Propagate, PropagateDefault, FRAC_1_TAU},
-    GameLoading,
+    GameLoading, ShaderCompSpawn,
 };
 
 use bevy::{math::vec3, prelude::*, render::view::NoFrustumCulling};
@@ -271,5 +271,6 @@ fn shadercomp_plum(mut commands: Commands, mesh_assets: Res<MeshAssets>) {
         },
         NoFrustumCulling,
         PropagateDefault(NoFrustumCulling),
+        ShaderCompSpawn,
     ));
 }

@@ -3,7 +3,7 @@ use std::{
     f32::consts::{PI, TAU},
 };
 
-use bevy::{core::FrameCount, math::*, prelude::*};
+use bevy::{core::FrameCount, math::*, prelude::*, render::view::NoFrustumCulling};
 use bevy_asset_loader::asset_collection::AssetCollection;
 use bevy_egui::EguiContexts;
 
@@ -11,9 +11,10 @@ use crate::{
     character_controller::manage_cursor,
     fps_controller::RenderPlayer,
     hash_noise,
+    mesh_assets::MeshAssets,
     units::spider::SpiderUnit,
-    util::{propagate_to_name, PropagateToName},
-    GameLoading,
+    util::{propagate_to_name, PropagateDefault, PropagateToName},
+    GameLoading, ShaderCompSpawn,
 };
 
 #[derive(AssetCollection, Resource)]
@@ -31,13 +32,18 @@ impl Plugin for GunsPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (position_lmg, mark_rotate_part, fire_gun)
+            (
+                position_lmg,
+                mark_rotate_part,
+                fire_gun,
+                update_blood_splatter,
+            )
                 .run_if(in_state(GameLoading::Loaded))
                 .after(manage_cursor),
         )
         .add_systems(Update, update_bullet.run_if(in_state(GameLoading::Loaded)))
         .add_systems(Update, propagate_to_name::<LMGMuzzleFlashMesh>)
-        .add_systems(OnEnter(GameLoading::Loaded), spawn_gun);
+        .add_systems(OnEnter(GameLoading::Loaded), (shadercomp_gun, spawn_gun));
     }
 }
 
@@ -175,6 +181,7 @@ pub fn fire_gun(
         ),
     >,
     frame: Res<FrameCount>,
+    mesh_assets: Res<MeshAssets>,
 ) {
     if contexts.ctx_mut().wants_pointer_input() {
         return;
@@ -273,7 +280,7 @@ pub fn fire_gun(
                         .into(),
                     Vec3::Y,
                 )
-                .with_scale(Vec3::splat(0.7)),
+                .with_scale(Vec3::splat(0.6)),
                 ..default()
             },
             LMGBullet {
@@ -284,7 +291,7 @@ pub fn fire_gun(
                         0.6 + hash_noise(frame, 2, 0) * rng_vel,
                     ))
                     .into(),
-                floor_y: player_cam_trans.translation.y - 2.5,
+                floor_y: player_cam_trans.translation.y - 1.6,
             },
         ));
 
@@ -304,11 +311,45 @@ pub fn fire_gun(
                 min: unit_ws_trans - 1.2,
                 max: unit_ws_trans + 1.2,
             };
-            if aabb.intersect_ray(&ray) != f32::INFINITY {
+            let t = aabb.intersect_ray(&ray);
+            if t != f32::INFINITY {
+                let hitp = ray.origin + ray.direction * t;
+                commands.spawn((
+                    SceneBundle {
+                        scene: mesh_assets.blood.clone(),
+                        transform: Transform::from_translation(hitp.into())
+                            .looking_at(player_cam_trans.translation, Vec3::Y),
+                        ..default()
+                    },
+                    BloodSplatter(0.0),
+                ));
                 dbg!("HIT");
                 unit.health -= 40.0;
             }
         }
+    }
+}
+
+#[derive(Component)]
+pub struct BloodSplatter(pub f32);
+
+fn update_blood_splatter(
+    mut commands: Commands,
+    mut query: Query<(Entity, &mut Transform, &mut BloodSplatter)>,
+    time: Res<Time>,
+) {
+    let dt = time.delta_seconds();
+    for (entity, mut trans, mut splatter) in &mut query {
+        trans.translation.y += dt * 10.0;
+        let local_z = trans.local_z();
+        trans.translation -= 0.4 * dt * *local_z;
+        trans.scale += dt * Vec3::ONE * 10.0;
+
+        if splatter.0 > 0.5 {
+            commands.entity(entity).despawn_recursive();
+        }
+
+        splatter.0 += dt;
     }
 }
 
@@ -330,7 +371,7 @@ pub fn update_bullet(
             bullet.velocity.x *= 0.993;
             bullet.velocity.z *= 0.993;
             if bullet.velocity.y == 0.0 {
-                trans.rotate_y(3.0 * dt * bullet.velocity.x * bullet.velocity.z);
+                trans.rotate_local_y(3.0 * dt * bullet.velocity.x * bullet.velocity.z);
             } else {
                 trans.rotation = Default::default();
             }
@@ -343,5 +384,29 @@ pub fn update_bullet(
             trans.rotate_local_y(-10.0 * dt);
             trans.rotate_local_x(-5.0 * dt);
         }
+    }
+}
+
+fn shadercomp_gun(
+    mut commands: Commands,
+    assets: Res<GunSceneAssets>,
+    mesh_assets: Res<MeshAssets>,
+) {
+    for scene in [
+        assets.lmg_bullet.clone(),
+        assets.lmg_bullet_jacket.clone(),
+        mesh_assets.blood.clone(),
+        mesh_assets.exp.clone(),
+    ] {
+        commands.spawn((
+            SceneBundle {
+                scene,
+                transform: Transform::from_xyz(0.0, -5000.0, 0.0),
+                ..default()
+            },
+            NoFrustumCulling,
+            PropagateDefault(NoFrustumCulling),
+            ShaderCompSpawn,
+        ));
     }
 }

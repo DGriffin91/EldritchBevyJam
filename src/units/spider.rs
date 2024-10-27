@@ -5,10 +5,11 @@ use std::{
 
 use crate::{
     animation::{init_animation_graph, AnimClips, AnimPlayerController, AnimationIndices},
+    fps_controller::RenderPlayer,
     hash_noise,
     mesh_assets::MeshAssets,
     util::{pfract, propagate, Propagate, PropagateDefault, FRAC_1_TAU},
-    GameLoading, LEVEL_MAIN_FLOOR, LEVEL_TRANSITION_HEIGHT,
+    GameLoading, ShaderCompSpawn, LEVEL_MAIN_FLOOR, LEVEL_TRANSITION_HEIGHT,
 };
 
 use bevy::{core::FrameCount, math::vec3, prelude::*, render::view::NoFrustumCulling};
@@ -27,6 +28,7 @@ impl Plugin for SpiderUnitPlugin {
                 spider_spawner,
                 move_to_player,
                 despawn_dead_spider,
+                update_explosion,
             )
                 .chain()
                 .run_if(in_state(GameLoading::Loaded)),
@@ -286,11 +288,49 @@ fn move_to_player(
     }
 }
 
-fn despawn_dead_spider(mut commands: Commands, units: Query<(Entity, &Transform, &SpiderUnit)>) {
-    for (entity, _trans, unit) in &units {
+fn despawn_dead_spider(
+    mut commands: Commands,
+    units: Query<(Entity, &Transform, &SpiderUnit)>,
+    mesh_assets: Res<MeshAssets>,
+    player_camera: Query<&Transform, (With<RenderPlayer>, Without<SpiderUnit>)>,
+) {
+    let Ok(player_cam_trans) = player_camera.get_single() else {
+        return;
+    };
+    for (entity, trans, unit) in &units {
         if unit.health < 0.0 {
             commands.entity(entity).despawn_recursive();
+            commands.spawn((
+                SceneBundle {
+                    scene: mesh_assets.exp.clone(),
+                    transform: Transform::from_translation(trans.translation.into())
+                        .looking_at(player_cam_trans.translation, Vec3::Y),
+                    ..default()
+                },
+                Explosion(0.0),
+            ));
         }
+    }
+}
+
+#[derive(Component)]
+pub struct Explosion(pub f32);
+
+fn update_explosion(
+    mut commands: Commands,
+    mut query: Query<(Entity, &mut Transform, &mut Explosion)>,
+    time: Res<Time>,
+) {
+    let dt = time.delta_seconds();
+    for (entity, mut trans, mut exp) in &mut query {
+        trans.translation.y += dt * 10.0;
+        trans.scale += dt * Vec3::ONE * 30.0;
+
+        if exp.0 > 1.0 {
+            commands.entity(entity).despawn_recursive();
+        }
+
+        exp.0 += dt;
     }
 }
 
@@ -303,5 +343,6 @@ fn shadercomp_spider(mut commands: Commands, mesh_assets: Res<MeshAssets>) {
         },
         NoFrustumCulling,
         PropagateDefault(NoFrustumCulling),
+        ShaderCompSpawn,
     ));
 }
