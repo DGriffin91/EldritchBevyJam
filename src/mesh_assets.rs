@@ -20,6 +20,8 @@ pub struct MeshAssets {
     #[asset(path = "temp/animated/Stinger_Enemy.gltf#Scene0")]
     pub spider: Handle<Scene>,
 
+    #[asset(path = "temp/level_start.gltf#Scene0")]
+    pub level_start: Handle<Scene>,
     #[asset(path = "temp/level_c.gltf#Scene0")]
     pub level_c: Handle<Scene>,
     #[asset(path = "temp/level_c_test.gltf#Scene0")]

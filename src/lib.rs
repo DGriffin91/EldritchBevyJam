@@ -17,3 +17,4 @@ pub enum GameLoading {
     AssetLoading,
     Loaded,
 }
+pub const LEVEL_TRANSITION_HEIGHT: f32 = -200.0;

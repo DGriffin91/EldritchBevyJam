@@ -20,6 +20,7 @@ use bevy_asset_loader::loading_state::config::ConfigureLoadingState;
 use bevy_asset_loader::loading_state::{LoadingState, LoadingStateAppExt};
 // use bevy_mod_mipmap_generator::{generate_mipmaps, MipmapGeneratorPlugin, MipmapGeneratorSettings};
 
+use bevy_egui::{egui, EguiContexts};
 use bs13::bs13_render::dyn_material_blender::AllDynMaterialImagesMaterial;
 
 use bs13::bs13_render::taa::BS13TaaPlugin;
@@ -32,7 +33,9 @@ use eldritch_game::mesh_assets::MeshAssets;
 use eldritch_game::physics::{AddCuboidColliders, AddCuboidSensors};
 use eldritch_game::units::UnitsPlugin;
 use eldritch_game::util::PropagateToName;
-use eldritch_game::{audio, character_controller, minimal_kira_audio, physics, GameLoading};
+use eldritch_game::{
+    audio, character_controller, minimal_kira_audio, physics, GameLoading, LEVEL_TRANSITION_HEIGHT,
+};
 use iyes_progress::ProgressPlugin;
 use kira::effect::reverb::ReverbBuilder;
 use kira::track::TrackBuilder;
@@ -105,7 +108,10 @@ fn main() {
 
     app.add_systems(Startup, setup)
         .add_systems(OnEnter(GameLoading::Loaded), level_c)
-        //.add_systems(Update, generate_mipmaps::<AllDynMaterialImagesMaterial>)
+        .add_systems(
+            Update,
+            (hide_start_level, crosshair).run_if(in_state(GameLoading::Loaded)),
+        )
         .run();
 }
 
@@ -137,7 +143,7 @@ fn setup(mut commands: Commands, _asset_server: Res<AssetServer>) {
         },
         cascade_shadow_config: CascadeShadowConfigBuilder {
             num_cascades: 1,
-            maximum_distance: 280.0,
+            maximum_distance: 700.0,
             ..default()
         }
         .into(),
@@ -162,11 +168,48 @@ fn level_c(mut commands: Commands, mesh_assets: Res<MeshAssets>) {
             ..default()
         })
         .insert((
+            StartLevel,
+            PropagateToName(AddTrimeshPhysics, Cow::Borrowed("COLLIDER")),
+            PropagateToName(AddCuboidColliders, Cow::Borrowed("COLLIDER")),
+            PropagateToName(AddCuboidSensors, Cow::Borrowed("SENSOR")),
+        ));
+    commands
+        .spawn(SceneBundle {
+            scene: mesh_assets.level_start.clone(),
+            ..default()
+        })
+        .insert((
+            StartLevel,
             PropagateToName(AddTrimeshPhysics, Cow::Borrowed("COLLIDER")),
             PropagateToName(AddCuboidColliders, Cow::Borrowed("COLLIDER")),
             PropagateToName(AddCuboidSensors, Cow::Borrowed("SENSOR")),
         ));
 }
+
+fn hide_start_level(
+    //mut commands: Commands,
+    player: Query<&Transform, With<Camera3d>>,
+    mut start_level_items: Query<(Entity, &mut Visibility), With<StartLevel>>,
+    mut has_run: Local<bool>,
+) {
+    if *has_run {
+        return;
+    }
+    let Ok(player) = player.get_single() else {
+        return;
+    };
+
+    if player.translation.y < LEVEL_TRANSITION_HEIGHT {
+        for (_entity, mut vis) in &mut start_level_items {
+            *vis = Visibility::Hidden;
+        }
+        *has_run = true;
+    }
+}
+
+#[derive(Component)]
+struct StartLevel;
+
 #[derive(Resource)]
 pub struct CookingTrack {
     pub handle: Handle<KiraTrackHandle>,
@@ -223,4 +266,30 @@ fn start_cooking(
                 ..default()
             },
         ]));
+}
+
+fn crosshair(mut contexts: EguiContexts) {
+    let ctx = contexts.ctx_mut();
+    let size = ctx.available_rect();
+    let painter = ctx.layer_painter(egui::LayerId::background());
+    let crosshair = 1.0;
+    let crosshair_border = 2.0;
+    let mid_x = size.width() * 0.5;
+    let mid_y = size.height() * 0.5;
+    painter.rect_filled(
+        egui::Rect::from_min_max(
+            egui::Pos2::new(mid_x - crosshair_border, mid_y - crosshair_border),
+            egui::Pos2::new(mid_x + crosshair_border, mid_y + crosshair_border),
+        ),
+        egui::Rounding::ZERO,
+        egui::Color32::BLACK,
+    );
+    painter.rect_filled(
+        egui::Rect::from_min_max(
+            egui::Pos2::new(mid_x - crosshair, mid_y - crosshair),
+            egui::Pos2::new(mid_x + crosshair, mid_y + crosshair),
+        ),
+        egui::Rounding::ZERO,
+        egui::Color32::WHITE,
+    );
 }

@@ -29,7 +29,8 @@ impl Plugin for PlumUnitPlugin {
             )
                 .chain()
                 .run_if(in_state(GameLoading::Loaded)),
-        );
+        )
+        .add_systems(OnEnter(GameLoading::Loaded), shadercomp_plum);
     }
 }
 
@@ -259,4 +260,16 @@ fn move_to_player(
             }
         }
     }
+}
+
+fn shadercomp_plum(mut commands: Commands, mesh_assets: Res<MeshAssets>) {
+    commands.spawn((
+        SceneBundle {
+            scene: mesh_assets.plum.clone(),
+            transform: Transform::from_xyz(0.0, -5100.0, 0.0),
+            ..default()
+        },
+        NoFrustumCulling,
+        PropagateDefault(NoFrustumCulling),
+    ));
 }

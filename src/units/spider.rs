@@ -7,7 +7,7 @@ use crate::{
     animation::{init_animation_graph, AnimClips, AnimPlayerController, AnimationIndices},
     mesh_assets::MeshAssets,
     util::{pfract, propagate, Propagate, PropagateDefault, FRAC_1_TAU},
-    GameLoading,
+    GameLoading, LEVEL_TRANSITION_HEIGHT,
 };
 
 use bevy::{math::vec3, prelude::*, render::view::NoFrustumCulling};
@@ -29,7 +29,8 @@ impl Plugin for SpiderUnitPlugin {
             )
                 .chain()
                 .run_if(in_state(GameLoading::Loaded)),
-        );
+        )
+        .add_systems(OnEnter(GameLoading::Loaded), shadercomp_spider);
     }
 }
 
@@ -86,7 +87,7 @@ fn spider_spawner(
     };
     let t = time.elapsed_seconds();
 
-    if player.translation.y < -200.0 && t > *last_spawn + 5.0 {
+    if player.translation.y < LEVEL_TRANSITION_HEIGHT && t > *last_spawn + 5.0 {
         *last_spawn = t;
         dbg!("SPAWN");
         let mut ecmds = commands.spawn((
@@ -291,4 +292,16 @@ fn despawn_dead_spider(
             commands.entity(entity).despawn_recursive();
         }
     }
+}
+
+fn shadercomp_spider(mut commands: Commands, mesh_assets: Res<MeshAssets>) {
+    commands.spawn((
+        SceneBundle {
+            scene: mesh_assets.spider.clone(),
+            transform: Transform::from_xyz(0.0, -5000.0, 0.0),
+            ..default()
+        },
+        NoFrustumCulling,
+        PropagateDefault(NoFrustumCulling),
+    ));
 }
