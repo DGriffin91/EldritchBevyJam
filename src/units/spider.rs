@@ -5,12 +5,13 @@ use std::{
 
 use crate::{
     animation::{init_animation_graph, AnimClips, AnimPlayerController, AnimationIndices},
+    hash_noise,
     mesh_assets::MeshAssets,
     util::{pfract, propagate, Propagate, PropagateDefault, FRAC_1_TAU},
-    GameLoading, LEVEL_TRANSITION_HEIGHT,
+    GameLoading, LEVEL_MAIN_FLOOR, LEVEL_TRANSITION_HEIGHT,
 };
 
-use bevy::{math::vec3, prelude::*, render::view::NoFrustumCulling};
+use bevy::{core::FrameCount, math::vec3, prelude::*, render::view::NoFrustumCulling};
 use bevy_egui::{egui, EguiContexts};
 
 pub struct SpiderUnitPlugin;
@@ -81,19 +82,21 @@ fn spider_spawner(
     time: Res<Time>,
     mut last_spawn: Local<f32>,
     mesh_assets: Res<MeshAssets>,
+    frame: Res<FrameCount>,
 ) {
     let Ok(player) = player.get_single() else {
         return;
     };
     let t = time.elapsed_seconds();
-
+    let rng_x = (hash_noise(frame.0, 0, 0) * 2.0 - 1.0) * 500.0;
+    let rng_z = (hash_noise(frame.0, 1, 0) * 2.0 - 1.0) * 250.0 - 800.0;
     if player.translation.y < LEVEL_TRANSITION_HEIGHT && t > *last_spawn + 5.0 {
         *last_spawn = t;
         dbg!("SPAWN");
         let mut ecmds = commands.spawn((
             SceneBundle {
                 scene: mesh_assets.spider.clone(),
-                transform: Transform::from_xyz(0.0, -220.0, -700.0)
+                transform: Transform::from_xyz(rng_x, LEVEL_MAIN_FLOOR, rng_z)
                     .with_scale(Vec3::splat(SPIDER_SCALE)),
                 ..default()
             },

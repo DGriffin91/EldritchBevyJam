@@ -18,6 +18,7 @@ pub enum GameLoading {
     Loaded,
 }
 pub const LEVEL_TRANSITION_HEIGHT: f32 = -200.0;
+pub const LEVEL_MAIN_FLOOR: f32 = -220.0;
 
 #[inline(always)]
 pub fn uhash(a: u32, b: u32) -> u32 {

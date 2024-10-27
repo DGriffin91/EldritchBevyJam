@@ -288,25 +288,25 @@ pub fn fire_gun(
             },
         ));
 
-        // TODO use player cam
         let ray = obvhs::ray::Ray::new_inf(
-            gun_global_trans.translation().into(),
-            (*gun_global_trans.forward()).into(),
+            player_cam_trans.translation.into(),
+            (*player_cam_trans.forward()).into(),
         );
-        for (unit_trans, mut unit) in &mut units {
+        for (unit_transform, mut unit) in &mut units {
             //let matrix = unit_trans.affine();
             // TODO put as component
             //let aabb = obvhs::aabb::Aabb {
             //    min: matrix.transform_point3a(aabb.min()),
             //    max: matrix.transform_point3a(aabb.max()),
             //};
+            let unit_ws_trans = unit_transform.translation_vec3a();
             let aabb = obvhs::aabb::Aabb {
-                min: unit_trans.translation_vec3a() - 1.0,
-                max: unit_trans.translation_vec3a() + 1.0,
+                min: unit_ws_trans - 1.2,
+                max: unit_ws_trans + 1.2,
             };
             if aabb.intersect_ray(&ray) != f32::INFINITY {
                 dbg!("HIT");
-                unit.health -= 30.0;
+                unit.health -= 40.0;
             }
         }
     }

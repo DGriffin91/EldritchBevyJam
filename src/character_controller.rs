@@ -64,8 +64,8 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
             TransformBundle::from_transform(Transform::from_translation(SPAWN_POINT)),
             LogicalPlayer,
             FpsControllerInput {
-                pitch: -TAU / 12.0,
-                yaw: TAU * 5.0 / 8.0,
+                pitch: TAU * 0.0,
+                yaw: TAU * 0.0,
                 ..default()
             },
             FpsController {

@@ -9,6 +9,7 @@ use std::f32::consts::PI;
 
 use audio::{AudioAssets, GameAudioPlugin};
 use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
+use bevy::ecs::system::EntityCommands;
 use bevy::pbr::CascadeShadowConfigBuilder;
 use bevy::prelude::*;
 use bevy::render::settings::WgpuSettings;
@@ -26,11 +27,12 @@ use bs13::bs13_render::BS13StandardMaterialPluginsSet;
 use bs13_egui::BS13EguiPlugin;
 use character_controller::CharacterController;
 use eldritch_game::audio::spatial::{AudioEmitter, AudioEmitterSet};
+use eldritch_game::fps_controller::LogicalPlayer;
 use eldritch_game::guns::{GunSceneAssets, GunsPlugin};
 use eldritch_game::mesh_assets::MeshAssets;
 use eldritch_game::physics::{AddCuboidColliders, AddCuboidSensors};
 use eldritch_game::units::UnitsPlugin;
-use eldritch_game::util::PropagateToName;
+use eldritch_game::util::{propagate_to_name, PropagateToName};
 use eldritch_game::{
     audio, character_controller, minimal_kira_audio, physics, GameLoading, LEVEL_TRANSITION_HEIGHT,
 };
@@ -108,7 +110,13 @@ fn main() {
         .add_systems(OnEnter(GameLoading::Loaded), level_c)
         .add_systems(
             Update,
-            (hide_start_level, crosshair).run_if(in_state(GameLoading::Loaded)),
+            (
+                propagate_to_name::<PlayerStart>,
+                hide_start_level,
+                crosshair,
+                move_player_to_start,
+            )
+                .run_if(in_state(GameLoading::Loaded)),
         )
         .run();
 }
@@ -150,39 +158,55 @@ fn setup(mut commands: Commands, _asset_server: Res<AssetServer>) {
 }
 
 fn level_c(mut commands: Commands, mesh_assets: Res<MeshAssets>) {
-    commands
-        .spawn(SceneBundle {
-            scene: mesh_assets.level_c.clone(),
+    add_level_props(commands.spawn((SceneBundle {
+        scene: mesh_assets.level_c.clone(),
+        ..default()
+    },)));
+    add_level_props(commands.spawn((
+        StartLevel,
+        SceneBundle {
+            scene: mesh_assets.starting_level.clone(),
             ..default()
-        })
-        .insert((
-            PropagateToName(AddTrimeshPhysics, Cow::Borrowed("COLLIDER")),
-            PropagateToName(AddCuboidColliders, Cow::Borrowed("COLLIDER")),
-            PropagateToName(AddCuboidSensors, Cow::Borrowed("SENSOR")),
-        ));
-    commands
-        .spawn(SceneBundle {
-            scene: mesh_assets.level_c_test.clone(),
-            ..default()
-        })
-        .insert((
-            StartLevel,
-            PropagateToName(AddTrimeshPhysics, Cow::Borrowed("COLLIDER")),
-            PropagateToName(AddCuboidColliders, Cow::Borrowed("COLLIDER")),
-            PropagateToName(AddCuboidSensors, Cow::Borrowed("SENSOR")),
-        ));
-    commands
-        .spawn(SceneBundle {
+        },
+    )));
+    add_level_props(commands.spawn((
+        StartLevel,
+        SceneBundle {
             scene: mesh_assets.level_start.clone(),
             ..default()
-        })
-        .insert((
-            StartLevel,
-            PropagateToName(AddTrimeshPhysics, Cow::Borrowed("COLLIDER")),
-            PropagateToName(AddCuboidColliders, Cow::Borrowed("COLLIDER")),
-            PropagateToName(AddCuboidSensors, Cow::Borrowed("SENSOR")),
-        ));
+        },
+    )));
 }
+
+fn add_level_props(mut ecmds: EntityCommands) {
+    ecmds.insert((
+        PropagateToName(AddTrimeshPhysics, Cow::Borrowed("COLLIDER")),
+        PropagateToName(AddCuboidColliders, Cow::Borrowed("COLLIDER")),
+        PropagateToName(AddCuboidSensors, Cow::Borrowed("SENSOR")),
+        PropagateToName(PlayerStart, Cow::Borrowed("PLAYER_START")),
+    ));
+}
+
+fn move_player_to_start(
+    mut player: Query<&mut Transform, With<LogicalPlayer>>,
+    start: Query<(&mut Transform, &PlayerStart), Without<LogicalPlayer>>,
+    mut has_run: Local<bool>,
+) {
+    if *has_run {
+        return;
+    }
+    let Ok(mut player_trans) = player.get_single_mut() else {
+        return;
+    };
+    for (start_trans, _start) in start.iter() {
+        player_trans.translation = start_trans.translation;
+        player_trans.look_to(-start_trans.forward(), Vec3::Y);
+        *has_run = true;
+    }
+}
+
+#[derive(Component, Clone)]
+pub struct PlayerStart;
 
 fn hide_start_level(
     //mut commands: Commands,
