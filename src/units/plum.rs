@@ -23,7 +23,7 @@ impl Plugin for PlumUnitPlugin {
             (
                 propagate::<PlumUnitAnim, AnimationPlayer>,
                 init_animation_graph::<PlumUnitAnim>,
-                ui_example_system,
+                //ui_example_system,
                 put_self_on_parent,
                 move_to_player,
             )
@@ -73,6 +73,7 @@ impl AnimClips for PlumUnitAnim {
     }
 }
 
+#[allow(unused)]
 fn ui_example_system(
     mut commands: Commands,
     mesh_assets: Res<MeshAssets>,

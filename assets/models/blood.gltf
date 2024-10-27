@@ -441,7 +441,7 @@
 									"type":"VALUE",
 									"is_linked":false,
 									"from_socket":null,
-									"default_value":4.0,
+									"default_value":3.0,
 									"index":2
 								},
 								{
@@ -2106,8 +2106,8 @@
 						}
 					],
 					"material_name":"blood",
-					"material_graph_hash":"-3315542771935602459",
-					"material_graph_archetype_hash":"-7323927832400311430"
+					"material_graph_hash":"3452732018933069202",
+					"material_graph_archetype_hash":"-3872196806962293903"
 				}
 			},
 			"name":"blood",

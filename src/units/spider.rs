@@ -5,11 +5,12 @@ use std::{
 
 use crate::{
     animation::{init_animation_graph, AnimClips, AnimPlayerController, AnimationIndices},
+    character_controller::Player,
     fps_controller::RenderPlayer,
     hash_noise,
     mesh_assets::MeshAssets,
     util::{pfract, propagate, Propagate, PropagateDefault, FRAC_1_TAU},
-    GameLoading, ShaderCompSpawn, LEVEL_MAIN_FLOOR, LEVEL_TRANSITION_HEIGHT,
+    GameLoading, ShaderCompSpawn, LEVEL_MAIN_FLOOR,
 };
 
 use bevy::{core::FrameCount, math::vec3, prelude::*, render::view::NoFrustumCulling};
@@ -23,7 +24,7 @@ impl Plugin for SpiderUnitPlugin {
             (
                 propagate::<SpiderUnitAnim, AnimationPlayer>,
                 init_animation_graph::<SpiderUnitAnim>,
-                ui_example_system,
+                //ui_example_system,
                 put_self_on_parent,
                 spider_spawner,
                 move_to_player,
@@ -38,6 +39,8 @@ impl Plugin for SpiderUnitPlugin {
 }
 
 const SPIDER_SCALE: f32 = 0.5;
+const SPIDER_ATTACK_DMG: f32 = 4.0; // Per dt
+const MAX_SPIDER_COUNT: usize = 1000;
 
 #[derive(Component, Clone, Debug)]
 pub struct SpiderUnit {
@@ -80,39 +83,48 @@ impl AnimClips for SpiderUnitAnim {
 
 fn spider_spawner(
     mut commands: Commands,
-    player: Query<&Transform, (With<Camera3d>, Without<SpiderUnit>)>,
+    player: Query<(&Transform, &Player), (With<Camera3d>, Without<SpiderUnit>)>,
+    spiders: Query<&SpiderUnit>,
     time: Res<Time>,
     mut last_spawn: Local<f32>,
     mesh_assets: Res<MeshAssets>,
     frame: Res<FrameCount>,
 ) {
-    let Ok(player) = player.get_single() else {
+    let Ok((_player_trans, player)) = player.get_single() else {
         return;
     };
+    let spiders_count = spiders.iter().len();
+    if spiders_count > MAX_SPIDER_COUNT {
+        return;
+    }
     let t = time.elapsed_seconds();
     let rng_x = (hash_noise(frame.0, 0, 0) * 2.0 - 1.0) * 500.0;
     let rng_z = (hash_noise(frame.0, 1, 0) * 2.0 - 1.0) * 250.0 - 800.0;
-    if player.translation.y < LEVEL_TRANSITION_HEIGHT && t > *last_spawn + 5.0 {
-        *last_spawn = t;
-        dbg!("SPAWN");
-        let mut ecmds = commands.spawn((
-            SceneBundle {
-                scene: mesh_assets.spider.clone(),
-                transform: Transform::from_xyz(rng_x, LEVEL_MAIN_FLOOR, rng_z)
-                    .with_scale(Vec3::splat(SPIDER_SCALE)),
-                ..default()
-            },
-            SpiderUnit::default(),
-            NoFrustumCulling,
-            PropagateDefault(NoFrustumCulling),
-        ));
-        ecmds.insert(Propagate(SpiderUnitAnim {
-            main_entity: ecmds.id(),
-            added_ref_to_self_on_parent: false,
-        }));
+    if let Some(activity_start_time) = player.activity_start_time {
+        let mut spawn_interval = 3.0 / activity_start_time.powf(0.5);
+        spawn_interval = spawn_interval.clamp(0.2, 2.0);
+        if t > *last_spawn + spawn_interval {
+            *last_spawn = t;
+            let mut ecmds = commands.spawn((
+                SceneBundle {
+                    scene: mesh_assets.spider.clone(),
+                    transform: Transform::from_xyz(rng_x, LEVEL_MAIN_FLOOR, rng_z)
+                        .with_scale(Vec3::splat(SPIDER_SCALE)),
+                    ..default()
+                },
+                SpiderUnit::default(),
+                NoFrustumCulling,
+                PropagateDefault(NoFrustumCulling),
+            ));
+            ecmds.insert(Propagate(SpiderUnitAnim {
+                main_entity: ecmds.id(),
+                added_ref_to_self_on_parent: false,
+            }));
+        }
     }
 }
 
+#[allow(unused)]
 fn ui_example_system(
     mut commands: Commands,
     mesh_assets: Res<MeshAssets>,
@@ -187,7 +199,7 @@ fn put_self_on_parent(
 
 fn move_to_player(
     mut units: Query<(&mut Transform, &SpiderUnitAnimChildRef, &mut SpiderUnit)>,
-    player: Query<&Transform, (With<Camera3d>, Without<SpiderUnit>)>,
+    mut player: Query<(&Transform, &mut Player), (With<Camera3d>, Without<SpiderUnit>)>,
     time: Res<Time>,
     mut spider_anim: Query<(
         &mut AnimationTransitions,
@@ -196,13 +208,13 @@ fn move_to_player(
         &mut AnimationPlayer,
     )>,
 ) {
-    let Ok(player) = player.get_single() else {
+    let Ok((player_trans, mut player_stats)) = player.get_single_mut() else {
         return;
     };
     let dt = time.delta_seconds();
 
-    let dest = player.translation;
-    let attack_dist = 8.0;
+    let dest = player_trans.translation;
+    let attack_dist = 3.0;
     let base_walk_speed = 10.0;
     let base_turn_speed = 3.0;
 
@@ -231,7 +243,7 @@ fn move_to_player(
 
             let need_to_turn = to_dest.dot(*unit_trans.forward()) < 0.93;
 
-            let buffer = 5.0;
+            let buffer = 2.0;
             let should_pursue = !need_to_turn && to_dist > attack_dist;
             let should_attack = !need_to_turn && to_dist - buffer < attack_dist;
 
@@ -247,6 +259,7 @@ fn move_to_player(
 
             if player.playing("Attack") {
                 unit.action = SpiderAction::Attack;
+                player_stats.health -= dt * SPIDER_ATTACK_DMG;
 
                 //let active_anim = player.animation("Attack").unwrap();
                 //let anim_speed = active_anim.speed();
@@ -292,9 +305,9 @@ fn despawn_dead_spider(
     mut commands: Commands,
     units: Query<(Entity, &Transform, &SpiderUnit)>,
     mesh_assets: Res<MeshAssets>,
-    player_camera: Query<&Transform, (With<RenderPlayer>, Without<SpiderUnit>)>,
+    mut player_camera: Query<(&Transform, &mut Player), (With<RenderPlayer>, Without<SpiderUnit>)>,
 ) {
-    let Ok(player_cam_trans) = player_camera.get_single() else {
+    let Ok((player_cam_trans, mut player)) = player_camera.get_single_mut() else {
         return;
     };
     for (entity, trans, unit) in &units {
@@ -309,6 +322,7 @@ fn despawn_dead_spider(
                 },
                 Explosion(0.0),
             ));
+            player.kills += 1;
         }
     }
 }

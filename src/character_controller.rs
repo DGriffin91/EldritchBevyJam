@@ -119,8 +119,26 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
             },
             RenderPlayer { logical_entity },
             FramePyramid,
+            Player::default(),
         ))
         .insert(GameAudioReceiver);
+}
+
+#[derive(Component, Clone, Copy)]
+pub struct Player {
+    pub activity_start_time: Option<f32>,
+    pub health: f32,
+    pub kills: u32,
+}
+
+impl Default for Player {
+    fn default() -> Self {
+        Self {
+            activity_start_time: None,
+            health: 100.0,
+            kills: 0,
+        }
+    }
 }
 
 pub fn manage_cursor(

@@ -14,7 +14,7 @@ use crate::{
     mesh_assets::MeshAssets,
     units::spider::SpiderUnit,
     util::{propagate_to_name, PropagateDefault, PropagateToName},
-    GameLoading, ShaderCompSpawn,
+    GameLoading, ShaderCompSpawn, LEVEL_TRANSITION_HEIGHT,
 };
 
 #[derive(AssetCollection, Resource)]
@@ -43,7 +43,10 @@ impl Plugin for GunsPlugin {
         )
         .add_systems(Update, update_bullet.run_if(in_state(GameLoading::Loaded)))
         .add_systems(Update, propagate_to_name::<LMGMuzzleFlashMesh>)
-        .add_systems(OnEnter(GameLoading::Loaded), (shadercomp_gun, spawn_gun));
+        .add_systems(
+            OnEnter(GameLoading::Loaded),
+            (shadercomp_gun_misc, spawn_gun),
+        );
     }
 }
 
@@ -291,7 +294,7 @@ pub fn fire_gun(
                         0.6 + hash_noise(frame, 2, 0) * rng_vel,
                     ))
                     .into(),
-                floor_y: player_cam_trans.translation.y - 1.6,
+                floor_y: player_cam_trans.translation.y - 1.65,
             },
         ));
 
@@ -299,6 +302,7 @@ pub fn fire_gun(
             player_cam_trans.translation.into(),
             (*player_cam_trans.forward()).into(),
         );
+        let mut hit_count = 0;
         for (unit_transform, mut unit) in &mut units {
             //let matrix = unit_trans.affine();
             // TODO put as component
@@ -308,8 +312,8 @@ pub fn fire_gun(
             //};
             let unit_ws_trans = unit_transform.translation_vec3a();
             let aabb = obvhs::aabb::Aabb {
-                min: unit_ws_trans - 1.2,
-                max: unit_ws_trans + 1.2,
+                min: unit_ws_trans - 1.8,
+                max: unit_ws_trans + 1.8,
             };
             let t = aabb.intersect_ray(&ray);
             if t != f32::INFINITY {
@@ -323,8 +327,12 @@ pub fn fire_gun(
                     },
                     BloodSplatter(0.0),
                 ));
-                dbg!("HIT");
+                hit_count += 1;
                 unit.health -= 40.0;
+            }
+            if hit_count > 3 {
+                // Only damage 3 max units
+                break;
             }
         }
     }
@@ -340,10 +348,10 @@ fn update_blood_splatter(
 ) {
     let dt = time.delta_seconds();
     for (entity, mut trans, mut splatter) in &mut query {
-        trans.translation.y += dt * 10.0;
+        trans.translation.y += dt * 15.0;
         let local_z = trans.local_z();
         trans.translation -= 0.4 * dt * *local_z;
-        trans.scale += dt * Vec3::ONE * 10.0;
+        trans.scale += dt * Vec3::ONE * 15.0;
 
         if splatter.0 > 0.5 {
             commands.entity(entity).despawn_recursive();
@@ -360,12 +368,26 @@ pub struct LMGBullet {
 }
 
 pub fn update_bullet(
-    //mut commands: Commands,
+    mut commands: Commands,
     mut bullets: Query<(Entity, &mut LMGBullet, &mut Transform)>,
     time: Res<Time>,
+    player_camera: Query<&Transform, (With<RenderPlayer>, Without<LMGBullet>)>,
 ) {
+    let Ok(player_cam_trans) = player_camera.get_single() else {
+        return;
+    };
     let dt = time.delta_seconds();
-    for (_entity, mut bullet, mut trans) in &mut bullets {
+    let iter = bullets.iter_mut();
+    let mut delete_one = iter.len() > 20000;
+    for (entity, mut bullet, mut trans) in iter {
+        if delete_one {
+            commands.entity(entity).despawn_recursive();
+            delete_one = false;
+            continue;
+        }
+        if player_cam_trans.translation.y < LEVEL_TRANSITION_HEIGHT {
+            bullet.floor_y = -220.0;
+        }
         if trans.translation.y < bullet.floor_y + 0.1 {
             bullet.velocity.y = 0.0;
             bullet.velocity.x *= 0.993;
@@ -387,7 +409,7 @@ pub fn update_bullet(
     }
 }
 
-fn shadercomp_gun(
+fn shadercomp_gun_misc(
     mut commands: Commands,
     assets: Res<GunSceneAssets>,
     mesh_assets: Res<MeshAssets>,

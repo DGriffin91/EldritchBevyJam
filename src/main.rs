@@ -27,6 +27,7 @@ use bs13::bs13_render::BS13StandardMaterialPluginsSet;
 use bs13_egui::BS13EguiPlugin;
 use character_controller::CharacterController;
 use eldritch_game::audio::spatial::{AudioEmitter, AudioEmitterSet};
+use eldritch_game::character_controller::Player;
 use eldritch_game::fps_controller::LogicalPlayer;
 use eldritch_game::guns::{GunSceneAssets, GunsPlugin};
 use eldritch_game::mesh_assets::MeshAssets;
@@ -114,7 +115,7 @@ fn main() {
             (
                 propagate_to_name::<PlayerStart>,
                 hide_start_level,
-                crosshair,
+                hud,
                 move_player_to_start,
                 shadercomp_despawn,
             )
@@ -292,8 +293,46 @@ fn start_cooking(
         ]));
 }
 
-fn crosshair(mut contexts: EguiContexts) {
+fn hud(
+    mut contexts: EguiContexts,
+    mut player: Query<(&mut Transform, &mut Player)>,
+    mut has_set_size: Local<bool>,
+    time: Res<Time>,
+) {
+    let Ok((player_trans, mut player)) = player.get_single_mut() else {
+        return;
+    };
+
     let ctx = contexts.ctx_mut();
+
+    if !*has_set_size {
+        ctx.style_mut(|style| {
+            style.spacing.interact_size = egui::vec2(60.0, 32.0);
+
+            style
+                .text_styles
+                .get_mut(&egui::TextStyle::Body)
+                .unwrap()
+                .size *= 2.0;
+            style
+                .text_styles
+                .get_mut(&egui::TextStyle::Heading)
+                .unwrap()
+                .size *= 2.0;
+            style
+                .text_styles
+                .get_mut(&egui::TextStyle::Button)
+                .unwrap()
+                .size *= 2.0;
+            style
+                .text_styles
+                .get_mut(&egui::TextStyle::Monospace)
+                .unwrap()
+                .size *= 2.0;
+        });
+        *has_set_size = true;
+    }
+
     let size = ctx.available_rect();
     let painter = ctx.layer_painter(egui::LayerId::background());
     let crosshair = 1.0;
@@ -316,6 +355,39 @@ fn crosshair(mut contexts: EguiContexts) {
         egui::Rounding::ZERO,
         egui::Color32::WHITE,
     );
+
+    let health = player.health;
+    let kills = player.kills;
+    if let Some(time_survived) = &mut player.activity_start_time {
+        if health > 0.0 {
+            *time_survived += time.delta_seconds();
+        }
+
+        painter.text(
+            egui::Pos2::new(10.0, 10.0),
+            egui::Align2::LEFT_TOP,
+            format!(
+                "HEALTH        {:.1} \nKILLS         {} \nTIME SURVIVED {:.1}",
+                health, kills, time_survived
+            ),
+            egui::FontId {
+                size: 20.0,
+                family: egui::FontFamily::Monospace,
+            },
+            egui::Color32::from_rgba_unmultiplied(255, 255, 255, 96),
+        );
+    } else {
+        if player_trans.translation.y < LEVEL_TRANSITION_HEIGHT {
+            player.activity_start_time = Some(0.0);
+        }
+    }
+
+    //painter.debug_text(
+    //    egui::Pos2::new(0.0, 0.0),
+    //    egui::Align2::LEFT_TOP,
+    //    egui::Color32::WHITE,
+    //    "TEST",
+    //);
 }
 
 fn shadercomp_despawn(
