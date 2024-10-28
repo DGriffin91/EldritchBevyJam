@@ -4107,8 +4107,7 @@ dependencies = [
 [[package]]
 name = "obvhs"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b33c633edabc38cf8bdd011f3a7ae1d23d68cbd0e2df7ae1b4d96fe8368e4cf5"
+source = "git+https://github.com/DGriffin91/obvhs?branch=fix_simd_target_check#d842fae13f028e4f4394560e2bd542bad1f61a98"
 dependencies = [
  "bytemuck",
  "glam 0.27.0",
