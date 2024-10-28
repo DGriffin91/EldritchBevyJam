@@ -17,7 +17,7 @@ pub struct MenuPlugin;
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<UserSettings>()
-            .add_systems(Update, menu_ui.run_if(in_state(GameLoading::Loaded)));
+            .add_systems(PostUpdate, menu_ui.run_if(in_state(GameLoading::Loaded)));
     }
 }
 
