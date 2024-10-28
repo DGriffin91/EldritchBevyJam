@@ -6,7 +6,9 @@
 
 use std::borrow::Cow;
 use std::f32::consts::PI;
+use std::path::Path;
 
+use argh::FromArgs;
 use audio::{AudioAssets, GameAudioPlugin};
 use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::ecs::system::EntityCommands;
@@ -24,7 +26,9 @@ use bevy_egui::{egui, EguiContexts};
 
 use bs13::bs13_render::taa::BS13TaaPlugin;
 use bs13::bs13_render::BS13StandardMaterialPluginsSet;
+use bs13_core::get_abs_asset_path;
 use bs13_egui::BS13EguiPlugin;
+use bs13_render::image_util::convert_images_to_ktx2;
 use character_controller::CharacterController;
 use eldritch_game::audio::spatial::{AudioEmitter, AudioEmitterSet};
 use eldritch_game::character_controller::Player;
@@ -48,7 +52,20 @@ use minimal_kira_audio::{
 };
 use physics::{AddTrimeshPhysics, PhysicsStuff};
 
+#[derive(FromArgs, Resource, Clone)]
+/// Config
+pub struct Args {
+    /// convert gltf to use ktx
+    #[argh(switch)]
+    convert: bool,
+}
+
 fn main() {
+    let args: Args = argh::from_env();
+    if args.convert {
+        convert_images_to_ktx2(&[&get_abs_asset_path(Path::new("textures"))], true);
+    }
+
     let mut app = App::new();
     app.insert_resource(Msaa::Off)
         //.insert_resource(ClearColor(Color::srgb(0.1, 0.03, 0.03)))

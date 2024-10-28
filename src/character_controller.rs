@@ -73,7 +73,7 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
                 air_acceleration: 150.0,
                 jump_speed: 15.0,
                 run_speed: 50.0,
-                walk_speed: 10.0,
+                walk_speed: 8.0,
                 upright_height: height,
                 crouch_height: height * 0.5,
                 //gravity: 0.0,

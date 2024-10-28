@@ -71,6 +71,7 @@ kira = { version = "0.9", default-features = true }
 thiserror = "1.0.64"
 anyhow = "1.0.89"
 obvhs = { git = "https://github.com/DGriffin91/obvhs", branch = "fix_simd_target_check" }
+argh = "0.1.12"
 
 
 [patch.crates-io]
