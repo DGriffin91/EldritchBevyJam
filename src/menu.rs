@@ -11,13 +11,13 @@ use crate::fps_controller::{self, LogicalPlayer};
 use crate::guns::LMGBullet;
 use crate::units::plum::PlumUnit;
 use crate::units::spider::SpiderUnit;
-use crate::{GameLoading, StartLevel};
+use crate::{GameLoading, PlayerStart, StartLevel};
 
 pub struct MenuPlugin;
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<UserSettings>()
-            .add_systems(PostUpdate, menu_ui.run_if(in_state(GameLoading::Loaded)));
+            .add_systems(Update, menu_ui.run_if(in_state(GameLoading::Loaded)));
     }
 }
 
@@ -37,6 +37,8 @@ pub fn menu_ui(
     mut player: Query<&mut Player>,
     mut logical_player: Query<(&mut Transform, &LogicalPlayer)>,
     mut start_level_items: Query<(Entity, &mut Visibility), With<StartLevel>>,
+    start: Query<(&mut Transform, &PlayerStart), Without<LogicalPlayer>>,
+    mut app_exit: EventWriter<AppExit>,
 ) {
     let Ok(mut player_stats) = player.get_single_mut() else {
         return;
@@ -65,18 +67,6 @@ pub fn menu_ui(
             ui.allocate_space(egui::vec2(width, 40.0));
             ui.spacing_mut().slider_width = ui.available_width();
 
-            if ui.button("RESTART GAME").clicked() {
-                for entity in &stuff_to_despawn {
-                    commands.entity(entity).despawn_recursive();
-                }
-                player_trans.translation = vec3(0.0, 2.0, -200.0);
-                *player_stats = Default::default();
-
-                for (_entity, mut vis) in &mut start_level_items {
-                    *vis = Visibility::Visible;
-                }
-            }
-
             ui.label("GAME SETTINGS");
             let mut sens = fps_controller.sensitivity * 1000.0;
             if ui
@@ -94,6 +84,7 @@ pub fn menu_ui(
                     .text("RENDER SCALE"),
             );
 
+            ui.allocate_space(egui::vec2(width, 40.0));
             ui.label("WINDOW MODE");
             if ui
                 .radio(
@@ -115,6 +106,37 @@ pub fn menu_ui(
                 .clicked()
             {
                 window.mode = WindowMode::Windowed;
+            }
+
+            ui.allocate_space(egui::vec2(width, 40.0));
+            let mut restart = false;
+            if ui.button("RESTART GAME FROM LEDGE").clicked() {
+                restart = true;
+                player_trans.translation = vec3(0.0, 2.0, -200.0);
+                player_trans.look_to(vec3(0.0, 0.0, -1.0), Vec3::Y); // TODO doesn't work
+            }
+            if ui.button("RESTART GAME FROM BEGINNING").clicked() {
+                restart = true;
+                if let Some((start_trans, _start)) = start.iter().next() {
+                    player_trans.translation = start_trans.translation;
+                    player_trans.look_to(-start_trans.forward(), Vec3::Y); // TODO doesn't work
+                }
+            }
+
+            if restart {
+                for entity in &stuff_to_despawn {
+                    commands.entity(entity).despawn_recursive();
+                }
+                *player_stats = Default::default();
+
+                for (_entity, mut vis) in &mut start_level_items {
+                    *vis = Visibility::Visible;
+                }
+            }
+
+            ui.allocate_space(egui::vec2(width, 40.0));
+            if ui.button("EXIT GAME").clicked() {
+                app_exit.send(AppExit::Success);
             }
 
             ui.allocate_space(egui::vec2(width, height));

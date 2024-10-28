@@ -5,6 +5,7 @@ use bevy_egui::{egui, EguiContexts};
 
 use crate::{
     animation::{init_animation_graph, AnimClips, AnimationIndices},
+    menu::menu_ui,
     mesh_assets::MeshAssets,
     util::{propagate, Propagate},
     GameLoading,
@@ -21,7 +22,8 @@ impl Plugin for FoxUnitPlugin {
                 ui_example_system,
             )
                 .chain()
-                .run_if(in_state(GameLoading::Loaded)),
+                .run_if(in_state(GameLoading::Loaded))
+                .before(menu_ui),
         );
     }
 }

@@ -11,7 +11,7 @@ use crate::{
     character_controller::{manage_cursor, Player},
     fps_controller::RenderPlayer,
     hash_noise,
-    menu::UserSettings,
+    menu::{menu_ui, UserSettings},
     mesh_assets::MeshAssets,
     units::{plum::PlumUnit, spider::SpiderUnit},
     util::{propagate_to_name, PropagateDefault, PropagateToName},
@@ -40,7 +40,8 @@ impl Plugin for GunsPlugin {
                 update_blood_splatter,
             )
                 .run_if(in_state(GameLoading::Loaded))
-                .after(manage_cursor),
+                .after(manage_cursor)
+                .before(menu_ui),
         )
         .add_systems(Update, update_bullet.run_if(in_state(GameLoading::Loaded)))
         .add_systems(Update, propagate_to_name::<LMGMuzzleFlashMesh>)

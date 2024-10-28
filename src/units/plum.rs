@@ -10,6 +10,7 @@ use crate::{
     character_controller::Player,
     fps_controller::RenderPlayer,
     hash_noise,
+    menu::menu_ui,
     mesh_assets::MeshAssets,
     util::{pfract, propagate, Propagate, PropagateDefault, FRAC_1_TAU},
     GameLoading, ShaderCompSpawn, LEVEL_MAIN_FLOOR,
@@ -35,7 +36,8 @@ impl Plugin for PlumUnitPlugin {
                 despawn_dead_plum,
             )
                 .chain()
-                .run_if(in_state(GameLoading::Loaded)),
+                .run_if(in_state(GameLoading::Loaded))
+                .before(menu_ui),
         )
         .add_systems(OnEnter(GameLoading::Loaded), shadercomp_plum);
     }

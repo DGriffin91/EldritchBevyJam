@@ -36,8 +36,8 @@ use eldritch_game::physics::{AddCuboidColliders, AddCuboidSensors};
 use eldritch_game::units::UnitsPlugin;
 use eldritch_game::util::{propagate_to_name, PropagateToName};
 use eldritch_game::{
-    audio, character_controller, minimal_kira_audio, physics, GameLoading, ShaderCompSpawn,
-    StartLevel, LEVEL_TRANSITION_HEIGHT,
+    audio, character_controller, minimal_kira_audio, physics, GameLoading, PlayerStart,
+    ShaderCompSpawn, StartLevel, LEVEL_TRANSITION_HEIGHT,
 };
 use iyes_progress::ProgressPlugin;
 use kira::effect::reverb::ReverbBuilder;
@@ -169,13 +169,13 @@ fn level_c(mut commands: Commands, mesh_assets: Res<MeshAssets>) {
         scene: mesh_assets.level_c.clone(),
         ..default()
     },)));
-    //add_level_props(commands.spawn((
-    //    StartLevel,
-    //    SceneBundle {
-    //        scene: mesh_assets.starting_level.clone(),
-    //        ..default()
-    //    },
-    //)));
+    add_level_props(commands.spawn((
+        StartLevel,
+        SceneBundle {
+            scene: mesh_assets.starting_level.clone(),
+            ..default()
+        },
+    )));
     add_level_props(commands.spawn((
         StartLevel,
         SceneBundle {
@@ -211,9 +211,6 @@ fn move_player_to_start(
         *has_run = true;
     }
 }
-
-#[derive(Component, Clone)]
-pub struct PlayerStart;
 
 fn hide_start_level(
     //mut commands: Commands,
