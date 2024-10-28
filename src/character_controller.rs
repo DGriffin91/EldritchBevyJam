@@ -10,7 +10,7 @@ use bs13::bs13_render::taa::TaaBundle;
 use bs13::bs13_render::GpuCull;
 use bs13_render::frame_pyramid::FramePyramid;
 use bs13_render::ssr::Ssr;
-use bs13_render::DepthPrepassForDeferred;
+use bs13_render::{BS13ViewTargetSettings, DepthPrepassForDeferred};
 use fps_controller::{
     CameraConfig, FpsController, FpsControllerInput, FpsControllerPlugin, LogicalPlayer,
     RenderPlayer,
@@ -120,6 +120,7 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
             RenderPlayer { logical_entity },
             FramePyramid,
             Player::default(),
+            BS13ViewTargetSettings { render_scale: 1.0 },
         ))
         .insert(GameAudioReceiver);
 }

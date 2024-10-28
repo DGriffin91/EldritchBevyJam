@@ -5,6 +5,7 @@ pub mod audio;
 pub mod character_controller;
 pub mod fps_controller;
 pub mod guns;
+pub mod menu;
 pub mod mesh_assets;
 pub mod minimal_kira_audio;
 pub mod physics;

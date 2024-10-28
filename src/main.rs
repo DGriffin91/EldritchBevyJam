@@ -30,6 +30,7 @@ use eldritch_game::audio::spatial::{AudioEmitter, AudioEmitterSet};
 use eldritch_game::character_controller::Player;
 use eldritch_game::fps_controller::LogicalPlayer;
 use eldritch_game::guns::{GunSceneAssets, GunsPlugin};
+use eldritch_game::menu::MenuPlugin;
 use eldritch_game::mesh_assets::MeshAssets;
 use eldritch_game::physics::{AddCuboidColliders, AddCuboidSensors};
 use eldritch_game::units::UnitsPlugin;
@@ -94,6 +95,7 @@ fn main() {
             BS13TaaPlugin,
             PhysicsStuff,
             CharacterController,
+            MenuPlugin,
         ));
 
     app.add_plugins((GameAudioPlugin, UnitsPlugin, GunsPlugin));
@@ -115,6 +117,7 @@ fn main() {
             (
                 propagate_to_name::<PlayerStart>,
                 hide_start_level,
+                setup_egui_style,
                 hud,
                 move_player_to_start,
                 shadercomp_despawn,
@@ -293,10 +296,71 @@ fn start_cooking(
         ]));
 }
 
+fn setup_egui_style(mut contexts: EguiContexts, mut has_set_style: Local<bool>) {
+    let ctx = contexts.ctx_mut();
+
+    if !*has_set_style {
+        let mut visuals = egui::Visuals::dark();
+
+        visuals.window_shadow = egui::Shadow::NONE;
+        visuals.popup_shadow = egui::Shadow::NONE;
+
+        visuals.extreme_bg_color = egui::Color32::from_rgb(14, 14, 14);
+        visuals.window_fill = egui::Color32::from_rgb(14, 14, 14);
+
+        visuals.widgets.inactive.bg_stroke = egui::Stroke::NONE;
+        visuals.widgets.hovered.bg_stroke = egui::Stroke::NONE;
+        visuals.widgets.active.bg_stroke = egui::Stroke::NONE;
+        visuals.widgets.open.bg_stroke = egui::Stroke::NONE;
+
+        visuals.widgets.inactive.rounding = egui::Rounding::ZERO;
+        visuals.widgets.hovered.rounding = egui::Rounding::ZERO;
+        visuals.widgets.active.rounding = egui::Rounding::ZERO;
+        visuals.widgets.open.rounding = egui::Rounding::ZERO;
+
+        ctx.set_visuals(visuals);
+
+        ctx.style_mut(|style| {
+            style
+                .text_styles
+                .get_mut(&egui::TextStyle::Body)
+                .unwrap()
+                .family = egui::FontFamily::Monospace;
+
+            style.visuals.window_rounding = egui::Rounding::ZERO;
+            style.visuals.menu_rounding = egui::Rounding::ZERO;
+            style.visuals.window_stroke = egui::Stroke::NONE;
+
+            style.spacing.interact_size = egui::vec2(60.0, 32.0);
+
+            style
+                .text_styles
+                .get_mut(&egui::TextStyle::Body)
+                .unwrap()
+                .size *= 1.5;
+            style
+                .text_styles
+                .get_mut(&egui::TextStyle::Heading)
+                .unwrap()
+                .size *= 1.5;
+            style
+                .text_styles
+                .get_mut(&egui::TextStyle::Button)
+                .unwrap()
+                .size *= 1.5;
+            style
+                .text_styles
+                .get_mut(&egui::TextStyle::Monospace)
+                .unwrap()
+                .size *= 1.5;
+        });
+        *has_set_style = true;
+    }
+}
+
 fn hud(
     mut contexts: EguiContexts,
     mut player: Query<(&mut Transform, &mut Player)>,
-    mut has_set_size: Local<bool>,
     time: Res<Time>,
 ) {
     let Ok((player_trans, mut player)) = player.get_single_mut() else {
@@ -304,34 +368,6 @@ fn hud(
     };
 
     let ctx = contexts.ctx_mut();
-
-    if !*has_set_size {
-        ctx.style_mut(|style| {
-            style.spacing.interact_size = egui::vec2(60.0, 32.0);
-
-            style
-                .text_styles
-                .get_mut(&egui::TextStyle::Body)
-                .unwrap()
-                .size *= 2.0;
-            style
-                .text_styles
-                .get_mut(&egui::TextStyle::Heading)
-                .unwrap()
-                .size *= 2.0;
-            style
-                .text_styles
-                .get_mut(&egui::TextStyle::Button)
-                .unwrap()
-                .size *= 2.0;
-            style
-                .text_styles
-                .get_mut(&egui::TextStyle::Monospace)
-                .unwrap()
-                .size *= 2.0;
-        });
-        *has_set_size = true;
-    }
 
     let size = ctx.available_rect();
     let painter = ctx.layer_painter(egui::LayerId::background());
@@ -381,13 +417,6 @@ fn hud(
             player.activity_start_time = Some(0.0);
         }
     }
-
-    //painter.debug_text(
-    //    egui::Pos2::new(0.0, 0.0),
-    //    egui::Align2::LEFT_TOP,
-    //    egui::Color32::WHITE,
-    //    "TEST",
-    //);
 }
 
 fn shadercomp_despawn(

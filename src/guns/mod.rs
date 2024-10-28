@@ -11,6 +11,7 @@ use crate::{
     character_controller::manage_cursor,
     fps_controller::RenderPlayer,
     hash_noise,
+    menu::UserSettings,
     mesh_assets::MeshAssets,
     units::{plum::PlumUnit, spider::SpiderUnit},
     util::{propagate_to_name, PropagateDefault, PropagateToName},
@@ -184,9 +185,10 @@ pub fn fire_gun(
             Without<GunLMG>,
         ),
     >,
-    frame: Res<FrameCount>,
     mesh_assets: Res<MeshAssets>,
+    misc: (Res<FrameCount>, Res<UserSettings>),
 ) {
+    let (frame, settings) = misc;
     if contexts.ctx_mut().wants_pointer_input() {
         return;
     }
@@ -247,8 +249,10 @@ pub fn fire_gun(
 
     let max_vis_time = 0.04;
     if fire_flip_vis && can_fire && t - *vis_started < max_vis_time {
-        gun_muzzle_light.intensity = 400000.0;
-        *muzzle_flash_mesh_vis = Visibility::Visible;
+        if !settings.disable_muzzle_flash {
+            gun_muzzle_light.intensity = 400000.0;
+            *muzzle_flash_mesh_vis = Visibility::Visible;
+        }
         if *vis_started == f32::MAX {
             *vis_started = t;
         }
