@@ -8,14 +8,16 @@ use bevy_asset_loader::asset_collection::AssetCollection;
 use bevy_egui::EguiContexts;
 
 use crate::{
+    audio::AudioAssets,
     character_controller::{manage_cursor, Player},
     fps_controller::RenderPlayer,
     hash_noise,
     menu::{menu_ui, UserSettings},
     mesh_assets::MeshAssets,
+    minimal_kira_audio::{sound_data, KiraAudioManager, KiraSoundData, KiraTrackHandle},
     units::{plum::PlumUnit, spider::SpiderUnit},
     util::{propagate_to_name, PropagateDefault, PropagateToName},
-    GameLoading, ShaderCompSpawn, LEVEL_TRANSITION_HEIGHT,
+    GameLoading, SfxTrack, ShaderCompSpawn, LEVEL_TRANSITION_HEIGHT,
 };
 
 #[derive(AssetCollection, Resource)]
@@ -187,8 +189,16 @@ pub fn fire_gun(
     >,
     mesh_assets: Res<MeshAssets>,
     misc: (Res<FrameCount>, Res<UserSettings>, Res<Time>),
+    audio_stuff: (
+        Option<Res<SfxTrack>>,
+        Res<Assets<KiraSoundData>>,
+        ResMut<Assets<KiraTrackHandle>>,
+        ResMut<KiraAudioManager>,
+        Res<AudioAssets>,
+    ),
 ) {
     let (frame, settings, time) = misc;
+    let (sfx, sounds, tracks, mut manager, audio_assets) = audio_stuff;
     if contexts.ctx_mut().wants_pointer_input() {
         return;
     }
@@ -205,6 +215,9 @@ pub fn fire_gun(
         return;
     };
     let Ok(mut muzzle_flash_mesh_vis) = muzzle_flash_mesh.get_single_mut() else {
+        return;
+    };
+    let Some(sfx) = sfx else {
         return;
     };
 
@@ -272,6 +285,13 @@ pub fn fire_gun(
     }
 
     if fire_this_frame {
+        if let Some(track) = tracks.get(&sfx.handle) {
+            manager
+                .play(sound_data(&sounds, &audio_assets.gun).output_destination(&track.0))
+                .unwrap()
+                .set_volume(0.15, kira::tween::Tween::default());
+        }
+
         let gun_global_mat = gun_global_trans.compute_matrix();
         let rng_vel = 2.0;
 

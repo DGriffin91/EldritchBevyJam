@@ -9,9 +9,10 @@ use fps_controller::FpsController;
 use crate::character_controller::Player;
 use crate::fps_controller::{self, LogicalPlayer};
 use crate::guns::LMGBullet;
+use crate::minimal_kira_audio::KiraTrackHandle;
 use crate::units::plum::PlumUnit;
 use crate::units::spider::SpiderUnit;
-use crate::{GameLoading, PlayerStart, StartLevel};
+use crate::{GameLoading, MusicTrack, PlayerStart, SfxTrack, StartLevel};
 
 pub struct MenuPlugin;
 impl Plugin for MenuPlugin {
@@ -39,11 +40,20 @@ pub fn menu_ui(
     mut start_level_items: Query<(Entity, &mut Visibility), With<StartLevel>>,
     start: Query<(&mut Transform, &PlayerStart), Without<LogicalPlayer>>,
     mut app_exit: EventWriter<AppExit>,
+    music: Option<ResMut<MusicTrack>>,
+    sfx: Option<ResMut<SfxTrack>>,
+    mut tracks: ResMut<Assets<KiraTrackHandle>>,
 ) {
     let Ok(mut player_stats) = player.get_single_mut() else {
         return;
     };
     let Ok((mut player_trans, _)) = logical_player.get_single_mut() else {
+        return;
+    };
+    let Some(mut music) = music else {
+        return;
+    };
+    let Some(mut sfx) = sfx else {
         return;
     };
     let mut window = windows.single_mut();
@@ -54,7 +64,7 @@ pub fn menu_ui(
         return;
     }
     let height = window.height();
-    let width = 300.0;
+    let width = 250.0;
 
     egui::Window::new("SETTINGS")
         .fixed_pos(egui::Pos2::ZERO)
@@ -74,6 +84,28 @@ pub fn menu_ui(
                 .changed()
             {
                 fps_controller.sensitivity = sens / 1000.0;
+            }
+
+            if ui
+                .add(egui::Slider::new(&mut music.volume, 0.0..=2.0).text("MUSIC VOLUME"))
+                .changed()
+            {
+                if let Some(track) = tracks.get_mut(&music.handle) {
+                    track
+                        .0
+                        .set_volume(music.volume as f64, kira::tween::Tween::default());
+                }
+            }
+
+            if ui
+                .add(egui::Slider::new(&mut sfx.volume, 0.0..=2.0).text("SFX VOLUME"))
+                .changed()
+            {
+                if let Some(track) = tracks.get_mut(&sfx.handle) {
+                    track
+                        .0
+                        .set_volume(sfx.volume as f64, kira::tween::Tween::default());
+                }
             }
 
             ui.allocate_space(egui::vec2(width, 40.0));

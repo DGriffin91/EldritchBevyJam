@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use minimal_kira_audio::KiraTrackHandle;
 
 pub mod animation;
 pub mod audio;
@@ -16,6 +17,7 @@ pub mod util;
 pub enum GameLoading {
     #[default]
     AssetLoading,
+    AssetLoading2,
     Loaded,
 }
 pub const LEVEL_TRANSITION_HEIGHT: f32 = -200.0;
@@ -51,3 +53,14 @@ pub struct StartLevel;
 
 #[derive(Component, Clone)]
 pub struct PlayerStart;
+
+#[derive(Resource)]
+pub struct MusicTrack {
+    pub handle: Handle<KiraTrackHandle>,
+    pub volume: f32,
+}
+#[derive(Resource)]
+pub struct SfxTrack {
+    pub handle: Handle<KiraTrackHandle>,
+    pub volume: f32,
+}

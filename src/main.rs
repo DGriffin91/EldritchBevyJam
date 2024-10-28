@@ -9,7 +9,7 @@ use std::f32::consts::PI;
 use std::path::Path;
 
 use argh::FromArgs;
-use audio::{AudioAssets, GameAudioPlugin};
+use audio::GameAudioPlugin;
 use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::ecs::system::EntityCommands;
 use bevy::pbr::CascadeShadowConfigBuilder;
@@ -31,6 +31,7 @@ use bs13_egui::BS13EguiPlugin;
 use bs13_render::image_util::convert_images_to_ktx2;
 use character_controller::CharacterController;
 use eldritch_game::audio::spatial::{AudioEmitter, AudioEmitterSet};
+use eldritch_game::audio::AudioAssets;
 use eldritch_game::character_controller::Player;
 use eldritch_game::fps_controller::LogicalPlayer;
 use eldritch_game::guns::{GunSceneAssets, GunsPlugin};
@@ -40,8 +41,8 @@ use eldritch_game::physics::{AddCuboidColliders, AddCuboidSensors};
 use eldritch_game::units::UnitsPlugin;
 use eldritch_game::util::{propagate_to_name, PropagateToName};
 use eldritch_game::{
-    audio, character_controller, minimal_kira_audio, physics, GameLoading, PlayerStart,
-    ShaderCompSpawn, StartLevel, LEVEL_TRANSITION_HEIGHT,
+    audio, character_controller, minimal_kira_audio, physics, GameLoading, MusicTrack, PlayerStart,
+    SfxTrack, ShaderCompSpawn, StartLevel, LEVEL_TRANSITION_HEIGHT,
 };
 use iyes_progress::ProgressPlugin;
 use kira::effect::reverb::ReverbBuilder;
@@ -121,14 +122,18 @@ fn main() {
         .add_plugins(ProgressPlugin::new(GameLoading::AssetLoading))
         .add_loading_state(
             LoadingState::new(GameLoading::AssetLoading)
+                .continue_to_state(GameLoading::AssetLoading2)
+                .load_collection::<AudioAssets>(),
+        )
+        .add_loading_state(
+            LoadingState::new(GameLoading::AssetLoading2)
                 .continue_to_state(GameLoading::Loaded)
-                .load_collection::<AudioAssets>()
                 .load_collection::<MeshAssets>()
                 .load_collection::<GunSceneAssets>(),
         );
 
     app.add_systems(Startup, setup)
-        .add_systems(OnEnter(GameLoading::Loaded), level_c)
+        .add_systems(OnEnter(GameLoading::Loaded), (level_c, start_music).chain())
         .add_systems(
             Update,
             (
@@ -245,62 +250,49 @@ fn hide_start_level(
     }
 }
 
-#[derive(Resource)]
-pub struct CookingTrack {
-    pub handle: Handle<KiraTrackHandle>,
-}
-
-fn start_cooking(
+fn start_music(
     mut commands: Commands,
-    audio_assets: Res<AudioAssets>,
-    mesh_assets: Res<MeshAssets>,
     sounds: Res<Assets<KiraSoundData>>,
     mut tracks: ResMut<Assets<KiraTrackHandle>>,
     mut manager: ResMut<KiraAudioManager>,
-    mut audio_instances: ResMut<Assets<KiraSoundHandle>>,
+    audio_assets: Res<AudioAssets>,
 ) {
     let mut track = manager
         .add_sub_track({
-            let mut builder = TrackBuilder::new();
-            builder.add_effect(ReverbBuilder::new());
+            let builder = TrackBuilder::new();
+            //builder.add_effect(ReverbBuilder::new());
             builder
         })
         .unwrap();
 
-    let mut cooking = manager
-        .play(sound_data(&sounds, &audio_assets.cooking).output_destination(&track))
-        .unwrap();
-    cooking.set_loop_region(..);
-
     let mut music = manager
-        .play(sound_data(&sounds, &audio_assets.music).output_destination(&track))
+        .play(sound_data(&sounds, &audio_assets.game_music).output_destination(&track))
         .unwrap();
     music.set_loop_region(..);
-
     track.set_volume(1.0, Tween::default());
 
-    commands.insert_resource(CookingTrack {
+    commands.insert_resource(MusicTrack {
         handle: tracks.add(KiraTrackHandle(track)),
+        volume: 1.0,
     });
 
-    commands
-        .spawn(SceneBundle {
-            scene: mesh_assets.pan_stew.clone(),
-            transform: Transform::from_xyz(0.0, 2.0, 0.0),
-            ..default()
+    let mut sfx_track = manager
+        .add_sub_track({
+            let builder = TrackBuilder::new();
+            //builder.add_effect(ReverbBuilder {
+            //    feedback: kira::tween::Value::Fixed(0.9),
+            //    damping: kira::tween::Value::Fixed(0.5),
+            //    stereo_width: kira::tween::Value::Fixed(1.0),
+            //    mix: kira::tween::Value::Fixed(0.3),
+            //});
+            builder
         })
-        .insert(AudioEmitterSet(vec![
-            AudioEmitter {
-                handle: audio_instances.add(KiraSoundHandle(cooking)),
-                gain_db: 0.0,
-                ..default()
-            },
-            AudioEmitter {
-                handle: audio_instances.add(KiraSoundHandle(music)),
-                gain_db: -10.0,
-                ..default()
-            },
-        ]));
+        .unwrap();
+    sfx_track.set_volume(1.0, Tween::default());
+    commands.insert_resource(SfxTrack {
+        handle: tracks.add(KiraTrackHandle(sfx_track)),
+        volume: 1.0,
+    });
 }
 
 fn setup_egui_style(mut contexts: EguiContexts, mut has_set_style: Local<bool>) {

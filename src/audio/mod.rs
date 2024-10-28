@@ -8,10 +8,10 @@ pub mod spatial;
 
 #[derive(AssetCollection, Resource)]
 pub struct AudioAssets {
-    #[asset(path = "temp/audio/cooking.ogg")]
-    pub cooking: Handle<KiraSoundData>,
-    #[asset(path = "temp/audio/loop.ogg")]
-    pub music: Handle<KiraSoundData>,
+    #[asset(path = "audio/theme3.flac")]
+    pub game_music: Handle<KiraSoundData>,
+    #[asset(path = "audio/gun.flac")]
+    pub gun: Handle<KiraSoundData>,
 }
 
 pub struct GameAudioPlugin;
