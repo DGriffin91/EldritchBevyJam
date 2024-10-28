@@ -41,8 +41,8 @@ impl Plugin for PlumUnitPlugin {
     }
 }
 
-const MAX_PLUM_COUNT: usize = 40;
-const PLUM_ATTACK_DMG: f32 = 15.0; // Per boom
+const MAX_PLUM_COUNT: usize = 30;
+const PLUM_ATTACK_DMG: f32 = 20.0; // Per boom
 const PLUM_ATTACK_RADIUS: f32 = 20.0;
 
 #[derive(Component, Clone, Debug)]
@@ -215,8 +215,14 @@ fn move_to_player(
         return;
     };
     let dt = time.delta_seconds();
+    let dead = player_stats.health < 0.0;
 
-    let dest = player_trans.translation;
+    let dest = if dead {
+        vec3(0.0, LEVEL_MAIN_FLOOR, -1200.0)
+    } else {
+        player_trans.translation
+    };
+
     let attack_dist = 15.0;
 
     for (unit_entity, mut unit_trans, anim_child, mut unit) in &mut units {
@@ -244,7 +250,7 @@ fn move_to_player(
             let need_to_turn = to_dest.dot(*unit_trans.forward()) < 0.93;
 
             let buffer = 2.0;
-            let should_attack = to_dist - buffer < attack_dist;
+            let should_attack = to_dist - buffer < attack_dist && !dead;
             let should_pursue = !need_to_turn && to_dist > attack_dist;
 
             let attacking = player.playing("Attack");
@@ -254,7 +260,7 @@ fn move_to_player(
             } else if !attacking && !player.playing(dir_anim_index) && need_to_turn {
                 player.play(dir_anim_index, 0.1, 2.0, true);
             } else if !attacking && !player.playing("Fast_Walk_Cycle") && should_pursue {
-                player.play("Fast_Walk_Cycle", 0.1, 3.0, true);
+                player.play("Fast_Walk_Cycle", 0.1, if dead { 1.0 } else { 3.0 }, true);
             }
 
             if player.playing("Attack") {

@@ -213,7 +213,14 @@ fn move_to_player(
     };
     let dt = time.delta_seconds();
 
-    let dest = player_trans.translation;
+    let dead = player_stats.health < 0.0;
+
+    let dest = if dead {
+        vec3(0.0, LEVEL_MAIN_FLOOR, -1200.0)
+    } else {
+        player_trans.translation
+    };
+
     let attack_dist = 3.0;
     let base_walk_speed = 12.0;
     let base_turn_speed = 3.0;
@@ -245,7 +252,7 @@ fn move_to_player(
 
             let buffer = 2.0;
             let should_pursue = !need_to_turn && to_dist > attack_dist;
-            let should_attack = !need_to_turn && to_dist - buffer < attack_dist;
+            let should_attack = !need_to_turn && to_dist - buffer < attack_dist && !dead;
 
             let attacking = player.playing("Attack");
 
@@ -254,7 +261,12 @@ fn move_to_player(
             } else if !should_attack && !player.playing(dir_anim_index) && need_to_turn {
                 player.play(dir_anim_index, 0.1, 1.0, true);
             } else if !should_attack && !player.playing("Wandering_Walk_Cycle") && should_pursue {
-                player.play("Wandering_Walk_Cycle", 0.1, 6.0, true);
+                player.play(
+                    "Wandering_Walk_Cycle",
+                    0.1,
+                    if dead { 3.0 } else { 6.0 },
+                    true,
+                );
             }
 
             if player.playing("Attack") {

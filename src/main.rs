@@ -30,14 +30,14 @@ use eldritch_game::audio::spatial::{AudioEmitter, AudioEmitterSet};
 use eldritch_game::character_controller::Player;
 use eldritch_game::fps_controller::LogicalPlayer;
 use eldritch_game::guns::{GunSceneAssets, GunsPlugin};
-use eldritch_game::menu::MenuPlugin;
+use eldritch_game::menu::{menu_ui, MenuPlugin};
 use eldritch_game::mesh_assets::MeshAssets;
 use eldritch_game::physics::{AddCuboidColliders, AddCuboidSensors};
 use eldritch_game::units::UnitsPlugin;
 use eldritch_game::util::{propagate_to_name, PropagateToName};
 use eldritch_game::{
     audio, character_controller, minimal_kira_audio, physics, GameLoading, ShaderCompSpawn,
-    LEVEL_TRANSITION_HEIGHT,
+    StartLevel, LEVEL_TRANSITION_HEIGHT,
 };
 use iyes_progress::ProgressPlugin;
 use kira::effect::reverb::ReverbBuilder;
@@ -117,13 +117,14 @@ fn main() {
             (
                 propagate_to_name::<PlayerStart>,
                 hide_start_level,
-                setup_egui_style,
                 hud,
                 move_player_to_start,
                 shadercomp_despawn,
             )
+                .before(menu_ui)
                 .run_if(in_state(GameLoading::Loaded)),
         )
+        .add_systems(Update, setup_egui_style)
         .run();
 }
 
@@ -218,11 +219,7 @@ fn hide_start_level(
     //mut commands: Commands,
     player: Query<&Transform, With<Camera3d>>,
     mut start_level_items: Query<(Entity, &mut Visibility), With<StartLevel>>,
-    mut has_run: Local<bool>,
 ) {
-    if *has_run {
-        return;
-    }
     let Ok(player) = player.get_single() else {
         return;
     };
@@ -231,12 +228,8 @@ fn hide_start_level(
         for (_entity, mut vis) in &mut start_level_items {
             *vis = Visibility::Hidden;
         }
-        *has_run = true;
     }
 }
-
-#[derive(Component)]
-struct StartLevel;
 
 #[derive(Resource)]
 pub struct CookingTrack {

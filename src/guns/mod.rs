@@ -8,7 +8,7 @@ use bevy_asset_loader::asset_collection::AssetCollection;
 use bevy_egui::EguiContexts;
 
 use crate::{
-    character_controller::manage_cursor,
+    character_controller::{manage_cursor, Player},
     fps_controller::RenderPlayer,
     hash_noise,
     menu::UserSettings,
@@ -153,7 +153,7 @@ pub fn fire_gun(
         ),
     >,
     mut gun: Query<
-        (&mut GunLMG, &GlobalTransform),
+        (&mut GunLMG, &mut Visibility, &GlobalTransform),
         (
             Without<LMGRotateyBoi>,
             Without<LMGMuzzleFlashLight>,
@@ -169,14 +169,13 @@ pub fn fire_gun(
             Without<GunLMG>,
         ),
     >,
-    time: Res<Time>,
     mut fire_ready: Local<bool>,
     gun_assets: Res<GunSceneAssets>,
     mut vis_started: Local<f32>,
     mut spiders: Query<(&GlobalTransform, &mut SpiderUnit)>,
     mut plums: Query<(&GlobalTransform, &mut PlumUnit)>,
     player_camera: Query<
-        &Transform,
+        (&mut Player, &Transform),
         (
             With<RenderPlayer>,
             Without<LMGMuzzleFlashMesh>,
@@ -186,13 +185,13 @@ pub fn fire_gun(
         ),
     >,
     mesh_assets: Res<MeshAssets>,
-    misc: (Res<FrameCount>, Res<UserSettings>),
+    misc: (Res<FrameCount>, Res<UserSettings>, Res<Time>),
 ) {
-    let (frame, settings) = misc;
+    let (frame, settings, time) = misc;
     if contexts.ctx_mut().wants_pointer_input() {
         return;
     }
-    let Ok(player_cam_trans) = player_camera.get_single() else {
+    let Ok((player, player_cam_trans)) = player_camera.get_single() else {
         return;
     };
     let Ok((mut gun_rot_trans, mut props)) = gun_rot.get_single_mut() else {
@@ -201,12 +200,20 @@ pub fn fire_gun(
     let Ok((mut gun_muzzle_light, mut _muzzle_props)) = gun_muzzle.get_single_mut() else {
         return;
     };
-    let Ok((mut gun, gun_global_trans)) = gun.get_single_mut() else {
+    let Ok((mut gun, mut gun_vis, gun_global_trans)) = gun.get_single_mut() else {
         return;
     };
     let Ok(mut muzzle_flash_mesh_vis) = muzzle_flash_mesh.get_single_mut() else {
         return;
     };
+
+    let dead = player.health < 0.0;
+
+    if dead {
+        *gun_vis = Visibility::Hidden;
+    } else {
+        *gun_vis = Visibility::Visible;
+    }
 
     let frame = frame.0;
     let t = time.elapsed_seconds();
@@ -219,7 +226,7 @@ pub fn fire_gun(
     gun_muzzle_light.intensity = 0.0;
 
     // TODO make input configurable
-    let trigger_pressed = btn.pressed(MouseButton::Left);
+    let trigger_pressed = btn.pressed(MouseButton::Left) && !dead;
 
     if trigger_pressed {
         props.rotate_speed += dt * ramp_up_speed;
@@ -309,6 +316,10 @@ pub fn fire_gun(
         );
         let mut hit_count = 0;
         for (unit_transform, mut unit) in &mut spiders {
+            if hit_count > 3 {
+                // Only damage 3 max units
+                break;
+            }
             let unit_ws_trans = unit_transform.translation_vec3a();
             let aabb = obvhs::aabb::Aabb {
                 min: unit_ws_trans - 1.8,
@@ -329,17 +340,16 @@ pub fn fire_gun(
                 hit_count += 1;
                 unit.health -= 40.0;
             }
+        }
+        for (unit_transform, mut unit) in &mut plums {
             if hit_count > 3 {
                 // Only damage 3 max units
                 break;
             }
-        }
-        let mut hit_count = 0;
-        for (unit_transform, mut unit) in &mut plums {
             let unit_ws_trans = unit_transform.translation_vec3a();
             let aabb = obvhs::aabb::Aabb {
-                min: unit_ws_trans - 2.1,
-                max: unit_ws_trans + 2.1,
+                min: unit_ws_trans - 2.8,
+                max: unit_ws_trans + 2.8,
             };
             let t = aabb.intersect_ray(&ray);
             if t != f32::INFINITY {
@@ -354,11 +364,7 @@ pub fn fire_gun(
                     BloodSplatter(0.0),
                 ));
                 hit_count += 1;
-                unit.health -= 20.0;
-            }
-            if hit_count > 3 {
-                // Only damage 3 max units
-                break;
+                unit.health -= 10.0;
             }
         }
     }

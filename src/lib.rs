@@ -46,3 +46,5 @@ pub fn hash_noise(x: u32, y: u32, z: u32) -> f32 {
 
 #[derive(Component, Clone, Copy)]
 pub struct ShaderCompSpawn;
+#[derive(Component)]
+pub struct StartLevel;
