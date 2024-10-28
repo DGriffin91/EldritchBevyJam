@@ -12,7 +12,7 @@ use crate::{
     fps_controller::RenderPlayer,
     hash_noise,
     mesh_assets::MeshAssets,
-    units::spider::SpiderUnit,
+    units::{plum::PlumUnit, spider::SpiderUnit},
     util::{propagate_to_name, PropagateDefault, PropagateToName},
     GameLoading, ShaderCompSpawn, LEVEL_TRANSITION_HEIGHT,
 };
@@ -172,7 +172,8 @@ pub fn fire_gun(
     mut fire_ready: Local<bool>,
     gun_assets: Res<GunSceneAssets>,
     mut vis_started: Local<f32>,
-    mut units: Query<(&GlobalTransform, &mut SpiderUnit)>,
+    mut spiders: Query<(&GlobalTransform, &mut SpiderUnit)>,
+    mut plums: Query<(&GlobalTransform, &mut PlumUnit)>,
     player_camera: Query<
         &Transform,
         (
@@ -303,13 +304,7 @@ pub fn fire_gun(
             (*player_cam_trans.forward()).into(),
         );
         let mut hit_count = 0;
-        for (unit_transform, mut unit) in &mut units {
-            //let matrix = unit_trans.affine();
-            // TODO put as component
-            //let aabb = obvhs::aabb::Aabb {
-            //    min: matrix.transform_point3a(aabb.min()),
-            //    max: matrix.transform_point3a(aabb.max()),
-            //};
+        for (unit_transform, mut unit) in &mut spiders {
             let unit_ws_trans = unit_transform.translation_vec3a();
             let aabb = obvhs::aabb::Aabb {
                 min: unit_ws_trans - 1.8,
@@ -329,6 +324,33 @@ pub fn fire_gun(
                 ));
                 hit_count += 1;
                 unit.health -= 40.0;
+            }
+            if hit_count > 3 {
+                // Only damage 3 max units
+                break;
+            }
+        }
+        let mut hit_count = 0;
+        for (unit_transform, mut unit) in &mut plums {
+            let unit_ws_trans = unit_transform.translation_vec3a();
+            let aabb = obvhs::aabb::Aabb {
+                min: unit_ws_trans - 2.1,
+                max: unit_ws_trans + 2.1,
+            };
+            let t = aabb.intersect_ray(&ray);
+            if t != f32::INFINITY {
+                let hitp = ray.origin + ray.direction * t;
+                commands.spawn((
+                    SceneBundle {
+                        scene: mesh_assets.blood.clone(),
+                        transform: Transform::from_translation(hitp.into())
+                            .looking_at(player_cam_trans.translation, Vec3::Y),
+                        ..default()
+                    },
+                    BloodSplatter(0.0),
+                ));
+                hit_count += 1;
+                unit.health -= 20.0;
             }
             if hit_count > 3 {
                 // Only damage 3 max units

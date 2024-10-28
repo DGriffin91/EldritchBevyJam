@@ -307,7 +307,7 @@ fn despawn_dead_spider(
     mesh_assets: Res<MeshAssets>,
     mut player_camera: Query<(&Transform, &mut Player), (With<RenderPlayer>, Without<SpiderUnit>)>,
 ) {
-    let Ok((player_cam_trans, mut player)) = player_camera.get_single_mut() else {
+    let Ok((_player_cam_trans, mut player)) = player_camera.get_single_mut() else {
         return;
     };
     for (entity, trans, unit) in &units {
@@ -316,8 +316,7 @@ fn despawn_dead_spider(
             commands.spawn((
                 SceneBundle {
                     scene: mesh_assets.exp.clone(),
-                    transform: Transform::from_translation(trans.translation.into())
-                        .looking_at(player_cam_trans.translation, Vec3::Y),
+                    transform: Transform::from_translation(trans.translation.into()),
                     ..default()
                 },
                 Explosion(0.0),

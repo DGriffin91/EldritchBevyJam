@@ -7,13 +7,18 @@ use crate::{
     animation::{
         init_animation_graph, ramp_up_down_anim, AnimClips, AnimPlayerController, AnimationIndices,
     },
+    character_controller::Player,
+    fps_controller::RenderPlayer,
+    hash_noise,
     mesh_assets::MeshAssets,
     util::{pfract, propagate, Propagate, PropagateDefault, FRAC_1_TAU},
-    GameLoading, ShaderCompSpawn,
+    GameLoading, ShaderCompSpawn, LEVEL_MAIN_FLOOR,
 };
 
-use bevy::{math::vec3, prelude::*, render::view::NoFrustumCulling};
+use bevy::{core::FrameCount, math::vec3, prelude::*, render::view::NoFrustumCulling};
 use bevy_egui::{egui, EguiContexts};
+
+use super::spider::Explosion;
 
 pub struct PlumUnitPlugin;
 impl Plugin for PlumUnitPlugin {
@@ -24,8 +29,10 @@ impl Plugin for PlumUnitPlugin {
                 propagate::<PlumUnitAnim, AnimationPlayer>,
                 init_animation_graph::<PlumUnitAnim>,
                 //ui_example_system,
+                plum_spawner,
                 put_self_on_parent,
                 move_to_player,
+                despawn_dead_plum,
             )
                 .chain()
                 .run_if(in_state(GameLoading::Loaded)),
@@ -33,6 +40,10 @@ impl Plugin for PlumUnitPlugin {
         .add_systems(OnEnter(GameLoading::Loaded), shadercomp_plum);
     }
 }
+
+const MAX_PLUM_COUNT: usize = 40;
+const PLUM_ATTACK_DMG: f32 = 15.0; // Per boom
+const PLUM_ATTACK_RADIUS: f32 = 20.0;
 
 #[derive(Component, Clone, Debug)]
 pub struct PlumUnit {
@@ -70,6 +81,48 @@ pub struct PlumUnitAnimChildRef(pub Entity);
 impl AnimClips for PlumUnitAnim {
     fn get_gltf_id(&self, mesh_assets: &MeshAssets) -> Handle<Gltf> {
         mesh_assets.plum_gltf.clone_weak()
+    }
+}
+
+fn plum_spawner(
+    mut commands: Commands,
+    player: Query<(&Transform, &Player), (With<Camera3d>, Without<PlumUnit>)>,
+    plums: Query<&PlumUnit>,
+    time: Res<Time>,
+    mut last_spawn: Local<f32>,
+    mesh_assets: Res<MeshAssets>,
+    frame: Res<FrameCount>,
+) {
+    let Ok((_player_trans, player)) = player.get_single() else {
+        return;
+    };
+    let spiders_count = plums.iter().len();
+    if spiders_count > MAX_PLUM_COUNT {
+        return;
+    }
+    let t = time.elapsed_seconds();
+    let rng_x = (hash_noise(frame.0, 0, 1) * 2.0 - 1.0) * 500.0;
+    let rng_z = (hash_noise(frame.0, 1, 1) * 2.0 - 1.0) * 150.0 - 700.0;
+    if let Some(activity_start_time) = player.activity_start_time {
+        let mut spawn_interval = 10.0 / activity_start_time.powf(0.2);
+        spawn_interval = spawn_interval.clamp(0.2, 2.0);
+        if t > *last_spawn + spawn_interval {
+            *last_spawn = t;
+            let mut ecmds = commands.spawn((
+                SceneBundle {
+                    scene: mesh_assets.plum.clone(),
+                    transform: Transform::from_xyz(rng_x, LEVEL_MAIN_FLOOR, rng_z),
+                    ..default()
+                },
+                PlumUnit::default(),
+                NoFrustumCulling,
+                PropagateDefault(NoFrustumCulling),
+            ));
+            ecmds.insert(Propagate(PlumUnitAnim {
+                main_entity: ecmds.id(),
+                added_ref_to_self_on_parent: false,
+            }));
+        }
     }
 }
 
@@ -146,8 +199,8 @@ fn put_self_on_parent(
 }
 
 fn move_to_player(
-    mut units: Query<(&mut Transform, &PlumUnitAnimChildRef, &mut PlumUnit)>,
-    player: Query<&Transform, (With<Camera3d>, Without<PlumUnit>)>,
+    mut commands: Commands,
+    mut units: Query<(Entity, &mut Transform, &PlumUnitAnimChildRef, &mut PlumUnit)>,
     time: Res<Time>,
     mut plum_anim: Query<(
         &mut AnimationTransitions,
@@ -155,16 +208,18 @@ fn move_to_player(
         &PlumUnitAnim,
         &mut AnimationPlayer,
     )>,
+    mut player: Query<(&Transform, &mut Player), (With<Camera3d>, Without<PlumUnit>)>,
+    mesh_assets: Res<MeshAssets>,
 ) {
-    let Ok(player) = player.get_single() else {
+    let Ok((player_trans, mut player_stats)) = player.get_single_mut() else {
         return;
     };
     let dt = time.delta_seconds();
 
-    let dest = player.translation;
+    let dest = player_trans.translation;
     let attack_dist = 15.0;
 
-    for (mut unit_trans, anim_child, mut unit) in &mut units {
+    for (unit_entity, mut unit_trans, anim_child, mut unit) in &mut units {
         if let Ok((mut transitions, anim, _plum_unit, mut player)) = plum_anim.get_mut(anim_child.0)
         {
             let mut player = AnimPlayerController::new(&mut transitions, &mut player, anim);
@@ -195,11 +250,11 @@ fn move_to_player(
             let attacking = player.playing("Attack");
 
             if !attacking && should_attack {
-                player.play("Attack", 0.1, 1.0, false);
+                player.play("Attack", 0.1, 2.0, false);
             } else if !attacking && !player.playing(dir_anim_index) && need_to_turn {
-                player.play(dir_anim_index, 0.1, 1.0, true);
+                player.play(dir_anim_index, 0.1, 2.0, true);
             } else if !attacking && !player.playing("Fast_Walk_Cycle") && should_pursue {
-                player.play("Fast_Walk_Cycle", 0.1, 1.0, true);
+                player.play("Fast_Walk_Cycle", 0.1, 3.0, true);
             }
 
             if player.playing("Attack") {
@@ -209,7 +264,18 @@ fn move_to_player(
                 let anim_speed = active_anim.speed();
 
                 if active_anim.is_finished() {
-                    dbg!("BOOM");
+                    if dest.distance(unit_trans.translation) < PLUM_ATTACK_RADIUS {
+                        player_stats.health -= PLUM_ATTACK_DMG;
+                    }
+                    commands.entity(unit_entity).despawn_recursive();
+                    commands.spawn((
+                        SceneBundle {
+                            scene: mesh_assets.exp.clone(),
+                            transform: Transform::from_translation(unit_trans.translation.into()),
+                            ..default()
+                        },
+                        Explosion(0.0),
+                    ));
                 } else {
                     let dest_rot = unit_trans
                         .looking_at(vec3(dest.x, unit_trans.translation.y, dest.z), Vec3::Y);
@@ -259,6 +325,39 @@ fn move_to_player(
                     unit_trans.rotate_local_y(dt * base_turn_speed * anim_speed * TAU);
                 }
             }
+        }
+    }
+}
+
+fn despawn_dead_plum(
+    mut commands: Commands,
+    units: Query<(Entity, &Transform, &PlumUnit)>,
+    mesh_assets: Res<MeshAssets>,
+    mut player_camera: Query<(&Transform, &mut Player), (With<RenderPlayer>, Without<PlumUnit>)>,
+) {
+    let Ok((_player_cam_trans, mut player)) = player_camera.get_single_mut() else {
+        return;
+    };
+    for (entity, trans, unit) in &units {
+        if unit.health < 0.0 {
+            commands.entity(entity).despawn_recursive();
+            commands.spawn((
+                SceneBundle {
+                    scene: mesh_assets.exp.clone(),
+                    transform: Transform::from_translation(trans.translation),
+                    ..default()
+                },
+                Explosion(0.2),
+            ));
+            commands.spawn((
+                SceneBundle {
+                    scene: mesh_assets.exp.clone(),
+                    transform: Transform::from_translation(trans.translation + Vec3::Y * 1.5),
+                    ..default()
+                },
+                Explosion(0.0),
+            ));
+            player.kills += 1;
         }
     }
 }
